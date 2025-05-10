@@ -1,3 +1,5 @@
+import MdxLayout from "@/components/mdx-layout"
+
 # 📝 Posting Guidelines
 
 Welcome to **s3g** — a community-powered gallery platform. Please follow these simple rules to keep the experience enjoyable for everyone.
@@ -48,3 +50,7 @@ This platform is built for sharing and discovering. Please respect creators and 
 Feel free to reach out if you have questions or suggestions.
 
 Thanks for contributing to **s3g**!
+
+export default function MDXPage({ children }) {
+  return <MdxLayout>{children}</MdxLayout>
+}
