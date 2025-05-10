@@ -122,15 +122,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  text-align: left;
-}
