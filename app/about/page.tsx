@@ -1,5 +1,11 @@
+import AboutMDX from "./About.mdx"
+
 export default function About() {
   return (
-    <main className="min-h-screen bg-rose-400 px-32 py-4">About Page</main>
+    <main className="min-h-screen lg:px-[19rem] pt-16">
+      <section className="prose prose-neutral">
+        <AboutMDX />
+      </section>
+    </main>
   )
 } 

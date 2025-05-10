@@ -24,11 +24,11 @@ const Navbar = () => {
         }`}
     >
       <S3GLogo />
-      <ul className="flex gap-2 sm:gap-3 md:gap-6 text-lg">
-        <li><Link href="/" className="hover:underline max-md:hidden">home</Link></li>
-        <li><Link href="https://biswashdhungana.com.np" className="hover:underline max-md:hidden">me</Link></li>
-        <li><Link href="guidelines" className="hover:underline">guidelines</Link></li>
-        <li><Link href="about" className="hover:underline">about</Link></li>
+      <ul className="flex gap-2 sm:gap-3 md:gap-6 text-lg underline-offset-4">
+        <li><Link href="/" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">home</Link></li>
+        <li><Link href="https://biswashdhungana.com.np" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">me</Link></li>
+        <li><Link href="guidelines" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full" >guidelines</Link></li>
+        <li><Link href="about" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">about</Link></li>
       </ul>
       <Button asChild>
         <Link href="/upload">Upload</Link>
