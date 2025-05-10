@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ['fastly.picsum.photos',
+      's3.mazzakotrip.com'],
+  },
 };
 
 export default nextConfig;
