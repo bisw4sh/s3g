@@ -4,22 +4,26 @@ import { generateUploadUrl, savePhoto } from "./action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from 'next/image'
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner"
 
 const uploadSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   author: z.string().min(1, "Author is required"),
-  file: z.instanceof(FileList).transform(list => list.item(0))
+  file: z
+    .instanceof(FileList)
+    .transform((list) => list.item(0))
     .refine((file) => file !== null, {
       message: "Image is required",
     })
-    .refine((file) => file !== null && file.size <= 5000000, {
+    .refine((file) => file !== null && file.size <= 5_000_000, {
       message: "Max size is 5MB",
-    })
+    }),
 });
 
 type TUploadSchema = z.infer<typeof uploadSchema>;
@@ -53,16 +57,22 @@ const UploadPage = () => {
     }
   };
 
-  const onSubmit = async (data: TUploadSchema) => {
+  const onSubmit: SubmitHandler<TUploadSchema> = async (data: TUploadSchema) => {
     try {
-      console.log("Form data:", data);
-      const file = data.file as File;
+      const originalFile = data.file as File;
 
-      const url = await generateUploadUrl(file.name, file.type);
+      const extension = originalFile.name.split(".").pop() || "";
+      const renamedFileName = `${uuidv4()}.${extension}`;
+
+      const renamedFile = new File([originalFile], renamedFileName, {
+        type: originalFile.type,
+      });
+
+      const url = await generateUploadUrl(renamedFile.name, renamedFile.type);
       await fetch(url, {
         method: "PUT",
-        headers: { "Content-Type": file.type },
-        body: file,
+        headers: { "Content-Type": renamedFile.type },
+        body: renamedFile,
       });
 
       const finalUrl = url.split("?")[0];
@@ -74,9 +84,10 @@ const UploadPage = () => {
         author: data.author,
       });
 
-      console.log("Upload successful!");
+      toast("Upload successful!");
     } catch (error) {
       console.error("Upload failed:", error);
+      toast("Upload failed");
     }
   };
 
