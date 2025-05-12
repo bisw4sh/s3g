@@ -1,13 +1,20 @@
 import type { NextConfig } from "next";
 import createMDX from '@next/mdx'
-import remarkGfm from 'remark-gfm'
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      'fastly.picsum.photos',
-      's3.mazzakotrip.com'
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'fastly.picsum.photos',
+        pathname: '**', // allows any path
+      },
+      {
+        protocol: 'https',
+        hostname: 's3.mazzakotrip.com',
+        pathname: '/**'
+      },
     ],
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
