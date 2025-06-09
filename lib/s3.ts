@@ -2,11 +2,11 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3 = new S3Client({
-  region: "auto",
-  endpoint: `https://${process.env.BUCKET_URL}:${process.env.BUCKET_PORT}`,
+  region: "us-east-1",
+  endpoint: `https://${process.env.BUCKET_URL}`,
   credentials: {
-    accessKeyId: process.env.BUCKET_KEY!,
-    secretAccessKey: process.env.BUCKET_SECRET!,
+    accessKeyId: process.env.MINIO_ACCESS_KEY!,
+    secretAccessKey: process.env.MINIO_SECRET_KEY!,
   },
   forcePathStyle: true,
 });
@@ -18,6 +18,6 @@ export async function getPresignedUrl(fileName: string, fileType: string) {
     ContentType: fileType,
   });
 
-  return await getSignedUrl(s3, command, { expiresIn: 5 * 60 });
+  const url = await getSignedUrl(s3, command, { expiresIn: 5 * 60 });
+  return url;
 }
-

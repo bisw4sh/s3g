@@ -69,18 +69,17 @@ const UploadPage = () => {
       });
 
       const url = await generateUploadUrl(renamedFile.name, renamedFile.type);
+
       await fetch(url, {
         method: "PUT",
         headers: { "Content-Type": renamedFile.type },
         body: renamedFile,
       });
 
-      const finalUrl = url.split("?")[0];
-
       await savePhoto({
         title: data.title,
         description: data.description,
-        url: finalUrl,
+        fileName: renamedFile.name,
         author: data.author,
       });
 
