@@ -19,6 +19,6 @@ export async function savePhoto({
   author: string;
 }) {
   const imageUrl =
-    `https://${process.env.BUCKET_URL}/${process.env.BUCKET_NAME}/${fileName}`;
+    `${process.env.BUCKET_URL}/${fileName}`;
   await db.insert(photosTable).values({ title, description, url: imageUrl, author });
 }
