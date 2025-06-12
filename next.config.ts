@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         hostname: 's3.mazzakotrip.com',
         pathname: '/**'
       },
+      {
+        protocol: 'https',
+        hostname: 's5g.s3.ap-south-1.amazonaws.com',
+        pathname: '/**'
+      },
+
     ],
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
