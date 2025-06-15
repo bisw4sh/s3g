@@ -35,7 +35,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.3",
-    "remark-gfm": "^4.0.1",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
     "uuid": "^11.1.0",
@@ -43,7 +42,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@stefanprobst/remark-extract-toc": "^2.2.0",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
@@ -56,7 +54,6 @@
     "tailwindcss": "^4",
     "tsx": "^4.19.4",
     "tw-animate-css": "^1.2.9",
-    "typescript": "^5",
-    "velite": "^0.2.2"
+    "typescript": "^5"
   }
 }
