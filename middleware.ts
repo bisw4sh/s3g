@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith(`/${pageRoute}`)) {
       console.log('Protecting page route:', request.nextUrl.pathname) // Debug log
       if (!session) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.redirect(new URL('/signin', request.url))
       }
     }
   }
@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   // Keep your existing dashboard protection
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
     if (!session) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return NextResponse.redirect(new URL('/signin', request.url))
     }
   }
 
