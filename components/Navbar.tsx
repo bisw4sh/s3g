@@ -4,6 +4,13 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import S3GLogo from "./S3GLogo"
+import { authClient } from "@/lib/auth-client"
+import { LogOut } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const Navbar = () => {
   const [zen, setZen] = useState(false)
@@ -31,9 +38,35 @@ const Navbar = () => {
         <li><Link href="about" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">about</Link></li>
       </ul>
       <Button asChild>
-        <Link href="/upload">Upload</Link>
       </Button>
     </section>
+
+      <div>
+        {session ? (
+          <div className="flex justify-center items-center gap-3">
+            <Button asChild>
+              <Link href="/upload">Upload</Link>
+            </Button>
+
+
+            <Button onClick={async () => {
+              await authClient.signOut()
+            }} className="cursor-pointer">
+                <TooltipContent>
+                  <p>Sign Out</p>
+                </TooltipContent>
+              </Tooltip>
+
+            </Button>
+
+          </div>
+        ) :
+
+          <Button asChild>
+            <Link href="/signin">Sign In</Link>
+          </Button>}
+      </div>
+    </section >
   )
 }
 
