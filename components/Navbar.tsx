@@ -14,6 +14,9 @@ import {
 
 const Navbar = () => {
   const [zen, setZen] = useState(false)
+  const {
+    data: session,
+  } = authClient.useSession()
 
   useEffect(() => {
     const onScroll = () => {
@@ -37,9 +40,6 @@ const Navbar = () => {
         <li><Link href="guidelines" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full" >guidelines</Link></li>
         <li><Link href="about" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">about</Link></li>
       </ul>
-      <Button asChild>
-      </Button>
-    </section>
 
       <div>
         {session ? (
@@ -52,6 +52,12 @@ const Navbar = () => {
             <Button onClick={async () => {
               await authClient.signOut()
             }} className="cursor-pointer">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button className="p-1" >
+                    <LogOut className="h-5" />
+                  </Button>
+                </TooltipTrigger>
                 <TooltipContent>
                   <p>Sign Out</p>
                 </TooltipContent>
