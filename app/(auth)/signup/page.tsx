@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -22,7 +21,6 @@ const signUpSchema = z.object({
 type TSignUp = z.infer<typeof signUpSchema>;
 
 const SignUpPage = () => {
-  const router = useRouter();
 
   const {
     register,
