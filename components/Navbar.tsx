@@ -11,12 +11,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useRouter } from "next/navigation"
 
 const Navbar = () => {
   const [zen, setZen] = useState(false)
   const {
     data: session,
   } = authClient.useSession()
+  const router = useRouter()
 
   useEffect(() => {
     const onScroll = () => {
@@ -50,6 +52,7 @@ const Navbar = () => {
 
             <div onClick={async () => {
               await authClient.signOut()
+              router.push("/")
             }} className="cursor-pointer">
               <Tooltip>
                 <TooltipTrigger asChild>

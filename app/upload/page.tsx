@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { generateUploadUrl, savePhoto } from "./action";
+import { useRouter } from "next/navigation";
 
 const uploadSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -43,6 +44,7 @@ const UploadPage = () => {
       author: "",
     }
   });
+  const router = useRouter()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,6 +86,8 @@ const UploadPage = () => {
       });
 
       toast("Upload successful!");
+
+      router.push("/")
     } catch (error) {
       console.error("Upload failed:", error);
       toast("Upload failed");
