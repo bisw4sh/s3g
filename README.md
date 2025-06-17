@@ -1,6 +1,6 @@
 This project is for learning purposes of uploading to the amazon s3 bucket.
 
-[-] Authentication with betterAuth in my postgresql db using drizzle.
+[-] Authentication with betterAuth in my neon postgresql db using drizzle.
 
 [-] TailwindCSS will be custom color where i will modify using color palette, no dark modes. 
 
@@ -10,22 +10,7 @@ This project is for learning purposes of uploading to the amazon s3 bucket.
 
 [-] infinite query using react-query.
 
-### Run PostgreSQL on Docker
-
 ```
-mkdir -p ~/docker-volumes/postgres-data  # Create the directory if it doesn't exist
-```
-
-```docker
-docker run --name db \
-  -e POSTGRES_USER=bisw4sh \
-  -e POSTGRES_PASSWORD=acernitro \
-  -e POSTGRES_DB=s3gallery \
-  -p 5432:5432 \
-  -v ~/docker-volumes/postgres-data:/var/lib/postgresql/data \
-  -d postgres
-```
-
 #### Accessing the postgres data in the volume:
 `docker exec -it db psql -U bisw4sh -d s3gallery`
 
