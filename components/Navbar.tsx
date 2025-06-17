@@ -41,15 +41,14 @@ const Navbar = () => {
         <li><Link href="about" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">about</Link></li>
       </ul>
 
-      <div>
+      <div className="flex items-center justify-center gap-2">
         {session ? (
           <div className="flex justify-center items-center gap-3">
             <Button asChild>
               <Link href="/upload">Upload</Link>
             </Button>
 
-
-            <Button onClick={async () => {
+            <div onClick={async () => {
               await authClient.signOut()
             }} className="cursor-pointer">
               <Tooltip>
@@ -63,14 +62,21 @@ const Navbar = () => {
                 </TooltipContent>
               </Tooltip>
 
-            </Button>
-
+            </div>
           </div>
         ) :
 
-          <Button asChild>
-            <Link href="/signin">Sign In</Link>
-          </Button>}
+          <>
+            <Button asChild>
+              <Link href="/signin">Sign In</Link>
+            </Button>
+
+            <Button asChild>
+              <Link href="/signup">Sign Up</Link>
+            </Button>
+          </>
+        }
+
       </div>
     </section >
   )
