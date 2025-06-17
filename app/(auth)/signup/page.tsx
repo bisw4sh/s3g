@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -29,19 +30,19 @@ const SignUpPage = () => {
   } = useForm<TSignUp>({
     resolver: zodResolver(signUpSchema),
   });
+  const router = useRouter()
 
   const onSubmit: SubmitHandler<TSignUp> = async (userData: TSignUp) => {
     try {
-      const { data, error } = await authClient.signUp.email({
+      const { error } = await authClient.signUp.email({
         name: userData.name,
         email: userData.email,
         password: userData.password,
-        callbackURL: "/", // Where to redirect after verification
+        // callbackURL: "/",
       }, {
-        onSuccess: (data) => {
-          console.log("returned data", data)
+        onSuccess: () => {
           toast.success("Check your email for verification!");
-          // router.push("/verify-email");
+          router.push("/");
         },
         onError: (ctx) => {
           toast.error(ctx.error?.message || "Signup failed");
