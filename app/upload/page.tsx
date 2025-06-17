@@ -1,15 +1,15 @@
 "use client";
+import { z } from "zod";
+import Image from 'next/image'
+import { toast } from "sonner"
 import { useState } from "react";
-import { generateUploadUrl, savePhoto } from "./action";
+import { v4 } from "uuid";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from 'next/image'
-import { v4 as uuidv4 } from "uuid";
-import { toast } from "sonner"
+import { SubmitHandler, useForm } from "react-hook-form";
+import { generateUploadUrl, savePhoto } from "./action";
 
 const uploadSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -62,7 +62,7 @@ const UploadPage = () => {
       const originalFile = data.file as File;
 
       const extension = originalFile.name.split(".").pop() || "";
-      const renamedFileName = `${uuidv4()}.${extension}`;
+      const renamedFileName = `${v4()}.${extension}`;
 
       const renamedFile = new File([originalFile], renamedFileName, {
         type: originalFile.type,
