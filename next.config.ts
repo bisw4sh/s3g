@@ -7,16 +7,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'fastly.picsum.photos',
-        pathname: '**', // allows any path
-      },
-      {
-        protocol: 'https',
-        hostname: 's3.mazzakotrip.com',
-        pathname: '/**'
-      },
-      {
-        protocol: 'https',
         hostname: 's5g.s3.ap-south-1.amazonaws.com',
         pathname: '/**'
       },
