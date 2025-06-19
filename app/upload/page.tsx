@@ -17,15 +17,13 @@ const uploadSchema = z.object({
   description: z.string().min(1, "Description is required"),
   author: z.string().min(1, "Author is required"),
   file: z
-    .instanceof(File)
-    .refine((file) => file !== null, {
-      message: "Image is required",
-    })
-    .refine((file) => file !== null && file.size <= 5_000_000, {
-      message: "Max size is 5MB",
-    }),
+    .any()
+    .refine((files) => files?.length === 1, "Image is required")
+    .refine(
+      (files) => files?.[0]?.size <= 5_000_000,
+      "Max size is 5MB"
+    ),
 });
-
 type TUploadSchema = z.infer<typeof uploadSchema>;
 
 const UploadPage = () => {
@@ -60,16 +58,13 @@ const UploadPage = () => {
 
   const onSubmit: SubmitHandler<TUploadSchema> = async (data: TUploadSchema) => {
     try {
-      const originalFile = data.file as File;
-
-      const extension = originalFile.name.split(".").pop() || "";
+      const file = data.file[0];
+      const extension = file.name.split(".").pop() || "";
       const renamedFileName = `${v4()}.${extension}`;
 
-      const renamedFile = new File([originalFile], renamedFileName, {
-        type: originalFile.type,
-      });
-
-      const url = await generateUploadUrl(renamedFile.name, renamedFile.type);
+      const renamedFile = new File([file], renamedFileName, {
+        type: file.type,
+      }); const url = await generateUploadUrl(renamedFile.name, renamedFile.type);
 
       await fetch(url, {
         method: "PUT",
@@ -115,9 +110,8 @@ const UploadPage = () => {
             id="file"
             type="file"
             accept="image/*"
-            {...register("file", {
-              onChange: handleFileChange
-            })}
+            {...register("file")}
+            onChange={handleFileChange}
           />
           {errors.file && (
             <p className="text-red-500 text-sm">{errors.file.message as string}</p>
