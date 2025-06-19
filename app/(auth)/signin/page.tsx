@@ -83,6 +83,7 @@ const SignInPage = () => {
         // disableRedirect: true, //setting this true means handling token exchange manually
       });
     } catch (error) {
+      console.log(error)
       toast("couldn't signin by github")
     }
   }
@@ -97,6 +98,7 @@ const SignInPage = () => {
         newUserCallbackURL: "/welcome",
       });
     } catch (error) {
+      console.log(error)
       toast("couldn't signin by google")
     }
   }
