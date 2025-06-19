@@ -87,6 +87,20 @@ const SignInPage = () => {
     }
   }
 
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+        errorCallbackURL: "/error",
+        newUserCallbackURL: "/welcome",
+      });
+    } catch (error) {
+      toast("couldn't signin by google")
+    }
+  }
+
   return (
     <section className="w-full flex flex-col justify-center items-center min-h-[calc(100vh-10rem)]">
       <aside
@@ -139,6 +153,14 @@ const SignInPage = () => {
           onClick={handleGithubSignIn}
         >
           Github
+        </Button>
+
+        <Button
+          variant="secondary"
+          className="w-full hover:cursor-pointer"
+          onClick={handleGoogleSignIn}
+        >
+          Google
         </Button>
 
       </aside>
