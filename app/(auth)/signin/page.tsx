@@ -8,6 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import S3GLogo from "@/components/S3GLogo";
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Enter a valid email" }),
@@ -52,49 +53,95 @@ const SignInPage = () => {
     }
   };
 
+
+  const handleGithubSignIn = async () => {
+    try {
+
+      await authClient.signIn.social({
+        /**
+         * The social provider ID
+         * @example "github", "google", "apple"
+         */
+        provider: "github",
+        /**
+         * A URL to redirect after the user authenticates with the provider
+         * @default "/"
+         */
+        callbackURL: "/",
+        /**
+         * A URL to redirect if an error occurs during the sign in process
+         */
+        errorCallbackURL: "/error",
+        /**
+         * A URL to redirect if the user is newly registered
+         */
+        newUserCallbackURL: "/welcome",
+        /**
+         * disable the automatic redirect to the provider. 
+         * @default false
+         */
+        // disableRedirect: true, //setting this true means handling token exchange manually
+      });
+    } catch (error) {
+      toast("couldn't signin by github")
+    }
+  }
+
   return (
     <section className="w-full flex flex-col justify-center items-center min-h-[calc(100vh-10rem)]">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 w-full md:w-1/3 lg:w-1/3 flex flex-col justify-center items-center px-4 border py-8 rounded-md shadow-lg"
+      <aside
+        className="w-full md:w-1/3 lg:w-1/3 rounded-md shadow-lg py-8 border px-4 flex flex-col gap-4"
       >
-        <div className="text-2xl font-semibold">Sign In to the s3g</div>
-
-        {/* Email Field */}
-        <div className="space-y-2 w-full">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            placeholder="Enter your email address"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
-          )}
-        </div>
-
-        {/* Password Field */}
-        <div className="space-y-2 w-full">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="Enter your password (min 6 characters)"
-            {...register("password")}
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password.message}</p>
-          )}
-        </div>
-
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full hover:cursor-pointer"
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 flex flex-col justify-center items-center"
         >
-          {isSubmitting ? "Signing In..." : "Sign In"}
+          <div className="text-2xl font-semibold">Sign In to the <S3GLogo /></div>
+
+          {/* Email Field */}
+          <div className="space-y-2 w-full">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              placeholder="Enter your email address"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Password Field */}
+          <div className="space-y-2 w-full">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password (min 6 characters)"
+              {...register("password")}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full hover:cursor-pointer"
+          >
+            {isSubmitting ? "Signing In..." : "Sign In"}
+          </Button>
+        </form>
+        <Button
+          variant="secondary"
+          className="w-full hover:cursor-pointer"
+          onClick={handleGithubSignIn}
+        >
+          Github
         </Button>
-      </form>
+
+      </aside>
     </section>
   );
 };
