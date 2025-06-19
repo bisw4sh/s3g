@@ -1,3 +1,4 @@
+import { EUserRole } from "@/types/common/roles";
 import { integer, pgTable, varchar, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const photosTable = pgTable("photos", {
@@ -8,7 +9,7 @@ export const photosTable = pgTable("photos", {
   author: varchar({ length: 49 }).notNull(),
 });
 
-export const user = pgTable("user", {
+export const users = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -16,6 +17,10 @@ export const user = pgTable("user", {
   image: text("image"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  role: varchar("role", { length: 50 })
+    .$type<EUserRole>()
+    .default(EUserRole.USER)
+    .notNull(),
 });
 
 export const session = pgTable("session", {
@@ -26,14 +31,14 @@ export const session = pgTable("session", {
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   ipAddress: text("ipAddress"),
   userAgent: text("userAgent"),
-  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("accountId").notNull(),
   providerId: text("providerId").notNull(),
-  userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
   accessToken: text("accessToken"),
   refreshToken: text("refreshToken"),
   idToken: text("idToken"),
@@ -56,14 +61,14 @@ export const verification = pgTable("verification", {
 
 // Export the schema object
 export const schema = {
-  user,
+  users,
   session,
   account,
   verification,
 };
 
 // Export types
-export type User = typeof user.$inferSelect;
-export type NewUser = typeof user.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
 export type Session = typeof session.$inferSelect;
 export type NewSession = typeof session.$inferInsert;
