@@ -1,19 +1,18 @@
-This project is for learning purposes of uploading to the amazon s3 bucket.
+# s3g - managed gallery ontop of s3
 
-[-] Authentication with betterAuth in my neon postgresql db using drizzle.
+#### This project is for learning purposes of uploading to the amazon s3 bucket.
 
-[-] TailwindCSS will be custom color where i will modify using color palette, no dark modes. 
+1. [-] Authentication with betterAuth in my neon postgresql db using drizzle.
 
-[-] framer-motion for animate presence.
+2. [] TailwindCSS will be custom color where i will modify using color palette, no dark modes using[tweakcn](https://tweakcn.com/). 
 
-[-] no roles, authenticated means admin who can upload and delete, and unauthenticated can only see on what is available.
+3. [] framer-motion for animate presence.
 
-[-] infinite query using react-query.
+4. [] authenticated means you're eligible for up/down votes, admin who can upload and delete, and unauthenticated can only see on what is available.
+
+5. [] infinite query using react-query.
 
 ```
-#### Accessing the postgres data in the volume:
-`docker exec -it db psql -U bisw4sh -d s3gallery`
-
 ### Things to configure in AWS S3.
 
 - IAM user should have s3 permission.
