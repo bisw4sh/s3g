@@ -17,8 +17,7 @@ const uploadSchema = z.object({
   description: z.string().min(1, "Description is required"),
   author: z.string().min(1, "Author is required"),
   file: z
-    .instanceof(FileList)
-    .transform((list) => list.item(0))
+    .instanceof(File)
     .refine((file) => file !== null, {
       message: "Image is required",
     })
