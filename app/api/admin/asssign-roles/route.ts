@@ -1,11 +1,11 @@
 import { db } from "@/db";
-import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
-import { users } from "@/db/schema";
+import { schema } from "@/db/schema";
 import { EUserRole } from "@/types/common/roles";
+import { eq } from "drizzle-orm";
+import { AuthSession } from "@/lib/auth-types";
 
 export async function POST(request: Request) {
-
   try {
     // 1. Verify admin privileges
     const session = await auth.api.getSession({
@@ -13,9 +13,10 @@ export async function POST(request: Request) {
         disableCookieCache: true,
       },
       headers: request.headers,
-    });
+    }) as AuthSession;
 
-    if (!session || session.users.role !== EUserRole.ADMIN) {
+    // Check if session exists and user has admin role
+    if (!session?.user?.role || session.user.role !== EUserRole.ADMIN) {
       return Response.json(
         { error: "Unauthorized: Admin privileges required" },
         { status: 403 }
@@ -23,39 +24,39 @@ export async function POST(request: Request) {
     }
 
     // 2. Validate input
-    const { userId, newRole } = await request.json();
+    const body = await request.json();
+    const { userId, newRole } = body;
 
-    if (!userId || typeof userId !== "number") {
-      return Response.json(
-        { error: "Invalid user ID" },
-        { status: 400 }
-      );
+    if (!userId) {
+      return Response.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
     if (!Object.values(EUserRole).includes(newRole)) {
       return Response.json(
-        { error: `Invalid role. Allowed values: ${Object.values(EUserRole).join(", ")}` },
+        {
+          error: `Invalid role. Allowed values: ${Object.values(
+            EUserRole
+          ).join(", ")}`,
+        },
         { status: 400 }
       );
     }
 
     // 3. Update role
-    const result = await db.update(user)
+    const result = await db
+      .update(schema.users)
       .set({ role: newRole })
-      .where(eq(user.id, userId));
+      .where(eq(schema.users.id, userId));
 
-    if (result.rowCount === 0) {
-      return Response.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+    // Check if update was successful (result structure may vary by database)
+    if (!result || result.rowCount === 0) {
+      return Response.json({ error: "User not found" }, { status: 404 });
     }
 
     return Response.json(
       { success: true, message: `Role updated to ${newRole}` },
       { status: 200 }
     );
-
   } catch (error) {
     console.error("[ROLE_ASSIGNMENT_ERROR]:", error);
     return Response.json(
