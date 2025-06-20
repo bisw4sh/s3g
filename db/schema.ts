@@ -9,7 +9,7 @@ export const photosTable = pgTable("photos", {
   author: varchar({ length: 49 }).notNull(),
 });
 
-export const users = pgTable("user", {
+export const users = pgTable("users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -23,7 +23,7 @@ export const users = pgTable("user", {
     .notNull(),
 });
 
-export const session = pgTable("session", {
+export const sessions = pgTable("sessions", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expiresAt").notNull(),
   token: text("token").notNull().unique(),
@@ -34,7 +34,7 @@ export const session = pgTable("session", {
   userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const account = pgTable("account", {
+export const accounts = pgTable("accounts", {
   id: text("id").primaryKey(),
   accountId: text("accountId").notNull(),
   providerId: text("providerId").notNull(),
@@ -50,7 +50,7 @@ export const account = pgTable("account", {
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
-export const verification = pgTable("verification", {
+export const verifications = pgTable("verifications", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
@@ -59,16 +59,14 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updatedAt").defaultNow(),
 });
 
-// Export the schema object
 export const schema = {
   users,
-  session,
-  account,
-  verification,
+  sessions,
+  accounts,
+  verifications,
 };
 
-// Export types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
-export type Session = typeof session.$inferSelect;
-export type NewSession = typeof session.$inferInsert;
+export type Session = typeof sessions.$inferSelect;
+export type NewSession = typeof sessions.$inferInsert;
