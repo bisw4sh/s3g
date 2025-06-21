@@ -1,9 +1,10 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@/db";
-import { users, sessions, accounts, verifications, User } from "@/db/schema";
+import { admin } from "better-auth/plugins"
 import { eq } from "drizzle-orm";
-import { AuthSession } from "./auth-types";
+import { users, sessions, accounts, verifications, User } from "@/db/schema";
+import type { AuthSession } from "./auth-types";
+import { db } from "@/db";
 import { sendEmail } from "./sendEmail";
 import { resetPasswordTemplate } from "@/templates/sendResetPassword";
 import { verifyEmailTemplate } from "@/templates/verifyEmail";
@@ -20,6 +21,8 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 8,
+    maxPasswordLength: 50,
     autoSignIn: false,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
@@ -101,5 +104,6 @@ export const auth = betterAuth({
     },
   },
 
-  trustedOrigins: ["http://localhost:3000"],
+  plugins: [admin()],
+  trustedOrigins: [process.env.BETTER_AUTH_URL!],
 });
