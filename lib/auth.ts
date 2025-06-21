@@ -22,6 +22,16 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      console.log(`Password reset token been sent to email : ${user.email}`)
+
+      await sendEmail({
+        to: user.email,
+        subject: 'Reset your password',
+        html: resetPasswordTemplate(url),
+        text: `Reset your password by clicking: ${url}`
+      });
+    },
   },
   socialProviders: {
     github: {
@@ -35,28 +45,19 @@ export const auth = betterAuth({
   },
 
   emailVerification: {
-    sendVerificationEmail: async ({ user, url, token }) => {
+    sendVerificationEmail: async ({ user, url }) => {
+      console.log(`Verification token been sent to email : ${user.email}`)
+
       await sendEmail({
         to: user.email,
         subject: 'Verify your email address',
-        html: verifyEmailTemplate(url, token),
-        text: `Welcome! Please verify your email by clicking: ${url}?token=${token}`
+        html: verifyEmailTemplate(url),
+        text: `Welcome! Please verify your email by clicking: ${url}`
       });
     },
-
-    sendResetPassword: async ({ email, url }: { email: string, url: string }) => {
-      await sendEmail({
-        to: email,
-        subject: 'Reset your password',
-        html: resetPasswordTemplate(url),
-        text: `Reset your password by clicking: ${url}`
-      });
-    },
-
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
   },
-
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
