@@ -10,6 +10,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import S3GLogo from "@/components/S3GLogo";
 import { Suspense, useEffect } from "react";
+import Link from "next/link";
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Enter a valid email" }),
@@ -112,7 +113,7 @@ const SignInPage = () => {
   }
 
   return (
-    <section className="w-full flex flex-col justify-center items-center min-h-[calc(100vh-10rem)]">
+    <section className="w-full flex flex-col justify-center items-center min-h-[calc(100vh-5rem)]">
       <aside
         className="w-full md:w-1/3 lg:w-1/3 rounded-md shadow-lg py-8 border px-4 flex flex-col gap-4"
       >
@@ -157,6 +158,28 @@ const SignInPage = () => {
             {isSubmitting ? "Signing In..." : "Sign In"}
           </Button>
         </form>
+
+        {/* Button for Forgot Password*/}
+        <div className="space-y-2 w-full">
+          <Button
+            variant="link"
+            className="hover:cursor-pointer"
+          >
+            <Link href="/forgot-password">
+              Forgot Password ?
+            </Link>
+          </Button>
+
+          <Button
+            variant="link"
+            className="hover:cursor-pointer"
+          >
+            <Link href="/signup">
+              Create account using email and password
+            </Link>
+          </Button>
+        </div>
+
         <Button
           variant="secondary"
           className="w-full hover:cursor-pointer"
