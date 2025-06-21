@@ -50,7 +50,11 @@ const SignInPage = () => {
           router.push("/");
         },
         onError: (ctx) => {
-          toast.error(ctx.error?.message || "SignIn failed");
+          if (ctx.error.status === 403) {
+            toast.error("Please verify your email address");
+          } else {
+            toast.error(ctx.error?.message || "SignIn failed");
+          }
         },
       });
 
