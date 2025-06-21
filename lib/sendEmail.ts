@@ -1,11 +1,6 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail', auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async ({
   to,
@@ -19,17 +14,16 @@ export const sendEmail = async ({
   html?: string;
 }) => {
   try {
-    const info = await transporter.sendMail({
-      from: `"Your App" <${process.env.EMAIL_USER}>`,
+    resend.emails.send({
+      from: 'automated@s3g.com',
       to,
       subject,
-      text,
-      html: html || text,
+      html: html || text
     });
-    console.log('Email sent:', info.messageId);
-    return info;
+    console.log(`Email sent to ${to}`);
+    return
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('Error sending email to ', to, error);
     throw error;
   }
 };
