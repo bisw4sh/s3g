@@ -14,8 +14,8 @@ export const sendEmail = async ({
   html?: string;
 }) => {
   try {
-    resend.emails.send({
-      from: 'automated@s3g.com',
+    await resend.emails.send({
+      from: 'automated@biswashdhungana.com.np',
       to,
       subject,
       html: html || text
