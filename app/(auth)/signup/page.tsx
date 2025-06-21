@@ -44,7 +44,7 @@ const SignUpPage = () => {
       }, {
         onSuccess: () => {
           toast.success("Check your email for verification!");
-          router.push("/");
+          router.push(`/message?type=info&heading=Check+your+email&content=Verification+link+has+been+sent+to+your+email+address+:+${userData.email}`);
         },
         onError: (ctx) => {
           toast.error(ctx.error?.message || "Signup failed");
