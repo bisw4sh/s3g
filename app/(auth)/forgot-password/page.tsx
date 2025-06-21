@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const forgotEmailSchema = z.object({
   email: z.string().min(3, { message: "Email is required" }).email()
@@ -22,7 +23,6 @@ const forgotEmailSchema = z.object({
 type TForgotPassword = z.infer<typeof forgotEmailSchema>
 
 const ForgotPasswordComponent = () => {
-  // const router = useRouter();
 
   const form = useForm<TForgotPassword>({
     resolver: zodResolver(forgotEmailSchema),
@@ -33,15 +33,16 @@ const ForgotPasswordComponent = () => {
 
   async function onSubmit(values: TForgotPassword) {
     try {
-      const { data, error } = await authClient.forgetPassword({
+      const { error } = await authClient.forgetPassword({
         email: values.email,
         redirectTo: `http://localhost:3000/reset-password`,
       });
-      console.log("values", values)
-      console.log("data", data)
-      console.log("error", error)
-      // router.push(`/message?type=info&heading=Check+your+email&content=Password+reset+link+has+been+sent+to+your+email+address+${values.email}`);
+
+      if (error)
+        toast(error.message)
+
     } catch (error) {
+      toast("Password reset failed");
       console.error("Password reset failed:", error);
     }
   };

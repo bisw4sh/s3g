@@ -1,4 +1,5 @@
 "use client"
+//this is unused page, when we implement OTP based verification, we can use this
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {

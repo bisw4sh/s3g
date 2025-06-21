@@ -53,14 +53,18 @@ const ResetPasswordComponent = () => {
     }
 
     try {
-      await authClient.resetPassword({
+      const { error } = await authClient.resetPassword({
         token,
         newPassword: values.newPassword,
       });
+
+      if (error)
+        toast(error.message)
+
       router.push("/signin?message=Password%20reset%20successful");
     } catch (error) {
-      console.error("Password reset failed:", error);
-      toast("Failed to reset password. Try again.");
+      console.error("Password reset failed : ", error);
+      toast("Failed to reset password");
     }
   }
 
