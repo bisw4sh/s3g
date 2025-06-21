@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import S3GLogo from "@/components/S3GLogo";
+import { Suspense, useEffect } from "react";
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Enter a valid email" }),
@@ -18,6 +19,14 @@ type TSignIn = z.infer<typeof signInSchema>;
 
 const SignInPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams()
+  const message = searchParams.get("message")
+
+
+  useEffect(() => {
+    if (message)
+      toast(message)
+  }, [message])
 
   const {
     register,
@@ -87,7 +96,6 @@ const SignInPage = () => {
       toast("couldn't signin by github")
     }
   }
-
 
   const handleGoogleSignIn = async () => {
     try {
@@ -170,4 +178,11 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+const SignInPageWrapper = () => {
+  return (
+    <Suspense>
+      <SignInPage />
+    </Suspense>
+  )
+}
+export default SignInPageWrapper;
