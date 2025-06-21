@@ -1,0 +1,78 @@
+import MdxLayout from "@/components/mdx-layout"
+import S3GLogo from "@/components/S3GLogo";
+
+# Welcome to <S3GLogo/> – Your Smart Gallery Platform
+
+**s3g** is a modern gallery platform built with:
+- 🚀 **S3 Storage** for fast, reliable file hosting
+- 🔐 **BetterAuth** for secure RBAC (Role-Based Access Control)
+- 🗄️ **Drizzle ORM** with Neon's serverless PostgreSQL
+
+---
+
+## ✨ Platform Features
+
+- **Fast S3 uploads** with automatic thumbnail generation
+- **Granular access control** with user roles
+- **Modern database** architecture for performance
+- **Community-focused** sharing environment
+
+---
+
+## 📝 Community Guidelines
+
+Help us maintain a great platform for everyone:
+
+### ✅ Allowed Content
+- Original images, artwork, or projects
+- Creative work you have rights to
+- Respectful engagement in comments
+
+### 🚫 Prohibited Content
+- NSFW or offensive material
+- Copyrighted content without permission
+- Spam or excessive self-promotion
+- Multiple accounts to manipulate visibility
+
+---
+
+## 🔐 Access Levels
+
+| Role              | Upload | Delete | View Posts         |
+|-------------------|--------|--------|--------------------|
+| **Guest**         | ❌     | ❌     | Public only        |
+| **Authenticated** | ✅     | ❌     | Own + Public       |
+| **Admin**         | ✅     | ✅     | All posts          |
+
+---
+
+## 📦 Technical Specifications
+
+- **Max upload size:** 10MB per file
+- **Supported formats:** JPG, PNG, WebP, GIF
+- **Storage:** Secure S3 buckets with automatic optimization
+- **Database:** Serverless PostgreSQL via Drizzle ORM
+
+---
+
+## 🙏 Community First
+
+This platform thrives on mutual respect:
+- Credit original creators
+- Report inappropriate content
+- Help maintain a positive environment
+
+⚠️ Repeated violations may result in account suspension.
+
+---
+
+### Get Started
+- [Sign up](/signup) to upload your creations
+- [Browse gallery](/gallery) to discover amazing work
+- [Contact support](/contact) with questions
+
+Thanks for being part of **s3g**! 🎨
+
+export default function MDXPage({ children }) {
+  return <MdxLayout>{children}</MdxLayout>
+}
