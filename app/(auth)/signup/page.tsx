@@ -8,6 +8,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import S3GLogo from "@/components/S3GLogo";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -59,12 +61,12 @@ const SignUpPage = () => {
   };
 
   return (
-    <section className="w-full flex flex-col justify-center items-center min-h-[calc(100vh-10rem)]">
+    <section className="w-full flex flex-col justify-center items-center min-h-[calc(100vh-5rem)]">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 w-full md:w-1/3 lg:w-1/3 flex flex-col justify-center items-center px-4 border py-8 rounded-md shadow-lg"
       >
-        <div className="text-2xl font-semibold">Sign Up to the s3g</div>
+        <div className="text-2xl font-semibold">Sign Up to the <S3GLogo /></div>
 
         {/* Name Field */}
         <div className="space-y-2 w-full">
@@ -119,6 +121,9 @@ const SignUpPage = () => {
             <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
           )}
         </div>
+        <Link href="/signin" className="text-[#8fb4ff] underline underline-offset-4 text-sm self-start">
+          Already have an account or social sign in ?
+        </Link>
 
         <Button
           type="submit"
@@ -128,6 +133,11 @@ const SignUpPage = () => {
           {isSubmitting ? "Signing Up..." : "Sign Up"}
         </Button>
       </form>
+      {/* Button for Forgot Password*/}
+      <div className="space-y-2 w-full">
+
+
+      </div>
     </section>
   );
 };
