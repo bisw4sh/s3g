@@ -93,7 +93,7 @@ const MessagePage = () => {
         </div>
       )}
 
-      <div className="w-full md:w-1/2 lg:1/4">
+      <div className="w-full md:w-1/2 lg:1/4 p-3 text-center">
         {content}
       </div>
     </main>
