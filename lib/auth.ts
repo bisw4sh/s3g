@@ -5,6 +5,8 @@ import { users, sessions, accounts, verifications, User } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { AuthSession } from "./auth-types";
 import { sendEmail } from "./sendEmail";
+import { resetPasswordTemplate } from "@/templates/sendResetPassword";
+import { verifyEmailTemplate } from "@/templates/verifyEmail";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -37,19 +39,7 @@ export const auth = betterAuth({
       await sendEmail({
         to: user.email,
         subject: 'Verify your email address',
-        html: `
-          <h2>Welcome to YourApp!</h2>
-          <p>Please verify your email address to complete your registration.</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${url}?token=${token}" 
-               style="background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-              Verify Email Address
-            </a>
-          </div>
-          <p style="color: #666; font-size: 14px;">
-            Or copy and paste this link: ${url}?token=${token}
-          </p>
-        `,
+        html: verifyEmailTemplate(url, token),
         text: `Welcome! Please verify your email by clicking: ${url}?token=${token}`
       });
     },
@@ -58,29 +48,13 @@ export const auth = betterAuth({
       await sendEmail({
         to: email,
         subject: 'Reset your password',
-        html: `
-          <h2>Password Reset Request</h2>
-          <p>You requested to reset your password. Click the button below to continue:</p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${url}" 
-               style="background: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-              Reset Password
-            </a>
-          </div>
-          <p style="color: #666; font-size: 14px;">
-            This link will expire in 15 minutes.<br>
-            If you didn't request this, please ignore this email.
-          </p>
-          <p style="color: #666; font-size: 14px;">
-            Or copy and paste this link: ${url}
-          </p>
-        `,
+        html: resetPasswordTemplate(url),
         text: `Reset your password by clicking: ${url}`
       });
     },
 
     sendOnSignUp: true,
-    autoSignInAfterVerification: true, // Sign user in after email verification
+    autoSignInAfterVerification: true,
   },
 
   session: {
