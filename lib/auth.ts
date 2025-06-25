@@ -8,6 +8,7 @@ import { db } from "@/db";
 import { sendEmail } from "./sendEmail";
 import { resetPasswordTemplate } from "@/templates/sendResetPassword";
 import { verifyEmailTemplate } from "@/templates/verifyEmail";
+import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -104,6 +105,6 @@ export const auth = betterAuth({
     },
   },
 
-  plugins: [admin()],
+  plugins: [admin(), nextCookies()],
   trustedOrigins: [process.env.BETTER_AUTH_URL!],
 });

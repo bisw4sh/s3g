@@ -1,13 +1,5 @@
 import { EUserRole } from "@/types/common/roles";
-import { integer, pgTable, varchar, text, timestamp, boolean } from "drizzle-orm/pg-core";
-
-export const photosTable = pgTable("photos", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  title: varchar({ length: 49 }).notNull(),
-  description: varchar({ length: 254 }).notNull(),
-  url: varchar().notNull(),
-  author: varchar({ length: 49 }).notNull(),
-});
+import { pgTable, varchar, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -21,6 +13,18 @@ export const users = pgTable("users", {
     .$type<EUserRole>()
     .default(EUserRole.USER)
     .notNull(),
+});
+
+export const photosTable = pgTable("photos", {
+  title: varchar("title", { length: 49 }).notNull(),
+  description: varchar("description", { length: 254 }).notNull(),
+  url: varchar("url").primaryKey(),
+  author: varchar("author", { length: 49 }).notNull(),
+  createdBy: text("createdBy").notNull().references(() => users.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
 export const sessions = pgTable("sessions", {
@@ -64,9 +68,13 @@ export const schema = {
   sessions,
   accounts,
   verifications,
+  photosTable,
 };
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type NewSession = typeof sessions.$inferInsert;
+
+export type Photo = typeof photosTable.$inferSelect;
+export type NewPhoto = typeof photosTable.$inferInsert;
