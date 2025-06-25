@@ -119,7 +119,7 @@ const SignInPage = () => {
   return (
     <section className="w-full flex flex-col justify-center items-center min-h-[calc(100vh-5rem)]">
       <aside
-        className="w-full md:w-1/3 lg:w-1/3 rounded-md shadow-lg py-8 border px-4 flex flex-col gap-4"
+        className="w-full md:w-1/2 xl:w-1/3 rounded-md shadow-lg py-8 border px-4 flex flex-col gap-4"
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
