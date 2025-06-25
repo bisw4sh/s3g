@@ -1,6 +1,6 @@
 {
-  "id": "a1eb4379-00cf-4267-92a7-c8d4abf2616a",
-  "prevId": "e608d31d-e749-4b51-a30b-fd84aa18facb",
+  "id": "df07f1cf-2295-4041-a666-08034355c394",
+  "prevId": "836887cd-6f1e-4c64-9426-847b271d5a24",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -115,12 +115,6 @@
       "name": "photos",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
         "title": {
           "name": "title",
           "type": "varchar(49)",
@@ -136,7 +130,7 @@
         "url": {
           "name": "url",
           "type": "varchar",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "author": {
@@ -150,6 +144,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},

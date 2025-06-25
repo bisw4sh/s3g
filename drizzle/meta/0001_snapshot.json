@@ -1,6 +1,6 @@
 {
-  "id": "53440225-59eb-4be9-82a3-31653f962776",
-  "prevId": "0dcf9c90-a0b3-4bb1-abc2-def7d8f4d503",
+  "id": "1cc6262e-6185-4910-8f8c-dd3f49df14df",
+  "prevId": "c6b9a2c2-02ce-4b47-958b-a5219b58567b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -115,23 +115,6 @@
       "name": "photos",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "photos_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "title": {
           "name": "title",
           "type": "varchar(49)",
@@ -155,10 +138,30 @@
           "type": "varchar(49)",
           "primaryKey": false,
           "notNull": true
+        },
+        "createdBy": {
+          "name": "createdBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "photos_createdBy_users_id_fk": {
+          "name": "photos_createdBy_users_id_fk",
+          "tableFrom": "photos",
+          "tableTo": "users",
+          "columnsFrom": [
+            "createdBy"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

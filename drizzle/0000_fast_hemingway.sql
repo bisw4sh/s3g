@@ -14,6 +14,15 @@ CREATE TABLE "accounts" (
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "photos" (
+	"id" text PRIMARY KEY NOT NULL,
+	"title" varchar(49) NOT NULL,
+	"description" varchar(254) NOT NULL,
+	"url" varchar NOT NULL,
+	"author" varchar(49) NOT NULL,
+	"createdBy" text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "sessions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"expiresAt" timestamp NOT NULL,
@@ -47,9 +56,6 @@ CREATE TABLE "verifications" (
 	"updatedAt" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-DROP TABLE "account" CASCADE;--> statement-breakpoint
-DROP TABLE "session" CASCADE;--> statement-breakpoint
-DROP TABLE "user" CASCADE;--> statement-breakpoint
-DROP TABLE "verification" CASCADE;--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "photos" ADD CONSTRAINT "photos_createdBy_users_id_fk" FOREIGN KEY ("createdBy") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
