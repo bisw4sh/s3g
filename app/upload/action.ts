@@ -12,13 +12,15 @@ export async function savePhoto({
   description,
   fileName,
   author,
+  createdBy
 }: {
   title: string;
   description: string;
   fileName: string;
   author: string;
+  createdBy: string;
 }) {
   const imageUrl =
     `${process.env.BUCKET_URL}/${fileName}`;
-  await db.insert(photosTable).values({ title, description, url: imageUrl, author });
+  await db.insert(photosTable).values({ title, description, url: imageUrl, author, createdBy });
 }

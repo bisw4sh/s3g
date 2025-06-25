@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { generateUploadUrl, savePhoto } from "./action";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 const uploadSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -28,6 +29,7 @@ type TUploadSchema = z.infer<typeof uploadSchema>;
 
 const UploadPage = () => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const session = useSession()
 
   const {
     register,
@@ -58,9 +60,15 @@ const UploadPage = () => {
 
   const onSubmit: SubmitHandler<TUploadSchema> = async (data: TUploadSchema) => {
     try {
+      if (!session?.data?.user?.id) {
+        toast("unauthenticated")
+        return
+      }
+
       const file = data.file[0];
       const extension = file.name.split(".").pop() || "";
       const renamedFileName = `${v4()}.${extension}`;
+
 
       const renamedFile = new File([file], renamedFileName, {
         type: file.type,
@@ -77,6 +85,7 @@ const UploadPage = () => {
         description: data.description,
         fileName: renamedFile.name,
         author: data.author,
+        createdBy: session.data.user.id
       });
 
       toast("Upload successful!");
