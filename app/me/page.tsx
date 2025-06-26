@@ -3,9 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Photo } from "@/db/schema";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useCallback } from "react";
 import { ExtendedSession, useSession } from "@/lib/auth-client";
+import { Trash } from 'lucide-react';
+import { deletePhotoMyPhoto } from "./action";
+import { toast } from "sonner";
 
 async function fetchPhotos({ pageParam = 1, limit = 6 }: { pageParam?: number; limit?: number }): Promise<{
   data: Photo[];
@@ -42,6 +45,7 @@ export default function Me() {
     },
     initialPageParam: 1,
   });
+  const queryClient = useQueryClient();
 
   const photos = data?.pages.flatMap(page => page.data) || [];
 
@@ -66,6 +70,23 @@ export default function Me() {
     return () => observer.disconnect();
   }, [handleObserver]);
 
+  const handleDelete = async (url: string) => {
+    try {
+      const result = await deletePhotoMyPhoto({ url })
+
+      if (!result.success) {
+        toast(result.error)
+        return
+      }
+
+      toast(result.message)
+      queryClient.invalidateQueries({
+        queryKey: ["home-photos"],
+      });
+    } catch (error) {
+      toast("couldn't delete")
+    }
+  }
   const isLoading = status === 'pending';
 
   return (
@@ -133,9 +154,12 @@ export default function Me() {
                 height={256}
                 className="w-full h-64 object-cover"
               />
-              <div className="p-3">
-                <p className="font-semibold truncate">{photo.title}</p>
-                <p className="text-sm text-gray-500 line-clamp-2">{photo.description}</p>
+              <div className="p-3 flex w-full justify-between">
+                <aside >
+                  <p className="font-semibold truncate">{photo.title}</p>
+                  <p className="text-sm text-gray-500 line-clamp-2">{photo.description}</p>
+                </aside >
+                <Trash className="hover:stroke-red-600 hover:scale-105 cursor-pointer" onClick={() => handleDelete(photo.url)} />
               </div>
             </div>
           ))
