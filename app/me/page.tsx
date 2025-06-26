@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Photo } from "@/db/schema";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useCallback } from "react";
+import { ExtendedSession, useSession } from "@/lib/auth-client";
 
 async function fetchPhotos({ pageParam = 1, limit = 6 }: { pageParam?: number; limit?: number }): Promise<{
   data: Photo[];
@@ -21,6 +22,8 @@ async function fetchPhotos({ pageParam = 1, limit = 6 }: { pageParam?: number; l
 }
 
 export default function Me() {
+  const { data: session } = useSession() as { data: ExtendedSession };
+
   const {
     data,
     error,
@@ -70,18 +73,24 @@ export default function Me() {
       {/* Banner and Profile Section */}
       <section className="relative">
         <div className="w-full h-64 bg-gray-200 overflow-hidden">
+          <h1 className="absolute top-0 right-0 bg-white p-2 text-xl font-bold rounded-bl-lg">
+            <p className="opacity-70">
+              {session?.user?.name}
+            </p>
+          </h1>
           <Image
-            src="https://s5g.s3.ap-south-1.amazonaws.com/ee206beb-4a06-4112-8a6d-8a082d52818e.png"
+            src={session?.user?.coverUrl ? session?.user?.coverUrl : "/cover.jpg"}
             alt="cover image"
             width={1000}
             height={256}
             className="w-full h-64 object-cover"
             priority
           />
+
         </div>
         <div className="h-32 w-32 bg-white border-4 border-white rounded-full absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 lg:-left-10 lg:translate-x-0 overflow-hidden">
           <Image
-            src="https://s5g.s3.ap-south-1.amazonaws.com/049909da-cd61-4430-a78a-ff8bd04c0147.png"
+            src={session?.user?.profileUrl ? session?.user?.profileUrl : session?.user?.image ? session?.user?.image : "/profile.jpg"}
             alt="profile image"
             width={128}
             height={128}
