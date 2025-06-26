@@ -9,6 +9,8 @@ export const users = pgTable("users", {
   image: text("image"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+  profileUrl: text("profileUrl"),
+  coverUrl: text("coverUrl"),
   role: varchar("role", { length: 50 })
     .$type<EUserRole>()
     .default(EUserRole.USER)
