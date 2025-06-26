@@ -145,7 +145,7 @@ export default function Me() {
           photos.map((photo: Photo, index: number) => (
             <div
               key={`${photo.url}-${index}`}
-              className="rounded-md overflow-hidden border bg-white shadow-sm"
+              className="group relative rounded-md overflow-hidden border bg-white shadow-sm"
             >
               <Image
                 src={photo.url}
@@ -154,12 +154,17 @@ export default function Me() {
                 height={256}
                 className="w-full h-64 object-cover"
               />
-              <div className="p-3 flex w-full justify-between">
-                <aside >
-                  <p className="font-semibold truncate">{photo.title}</p>
-                  <p className="text-sm text-gray-500 line-clamp-2">{photo.description}</p>
-                </aside >
-                <Trash className="hover:stroke-red-600 hover:scale-105 cursor-pointer" onClick={() => handleDelete(photo.url)} />
+              {/* Trash icon appears only on hover */}
+              <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Trash
+                  className="text-red-500 hover:stroke-red-600 hover:scale-110 cursor-pointer"
+                  onClick={() => handleDelete(photo.url)}
+                />
+              </div>
+
+              <div className="p-3">
+                <p className="font-semibold truncate">{photo.title}</p>
+                <p className="text-sm text-gray-500 line-clamp-2">{photo.description}</p>
               </div>
             </div>
           ))
