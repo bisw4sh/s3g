@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin } from "better-auth/plugins"
+import { admin, customSession } from "better-auth/plugins"
 import { eq } from "drizzle-orm";
 import { users, sessions, accounts, verifications, User } from "@/db/schema";
 import type { AuthSession } from "./auth-types";
@@ -68,7 +68,7 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       maxAge: 5 * 60, // 5 minutes
-    },
+    }
   },
 
   callbacks: {
@@ -104,7 +104,33 @@ export const auth = betterAuth({
       return session;
     },
   },
+  plugins: [
+    admin(),
+    nextCookies(),
+    customSession(async ({ user, session }) => {
+      const fullUser = await db.query.users.findFirst({
+        where: eq(users.id, user.id),
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+          emailVerified: true,
+          role: true,
+          image: true,
+          profileUrl: true,
+          coverUrl: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
 
-  plugins: [admin(), nextCookies()],
+      return {
+        session,
+        user: {
+          ...fullUser,
+        },
+      };
+    }),
+  ],
   trustedOrigins: [process.env.BETTER_AUTH_URL!],
 });
