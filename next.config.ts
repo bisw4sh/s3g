@@ -10,7 +10,11 @@ const nextConfig: NextConfig = {
         hostname: 's5g.s3.ap-south-1.amazonaws.com',
         pathname: '/**'
       },
-
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**'
+      },
     ],
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
