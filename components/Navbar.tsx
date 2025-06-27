@@ -12,11 +12,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useRouter } from "next/navigation"
+import { EUserRole } from "@/types/common/roles"
 
 const Navbar = () => {
   const [zen, setZen] = useState(false)
   const {
-    data: session,
+    data,
   } = authClient.useSession()
   const router = useRouter()
 
@@ -41,10 +42,12 @@ const Navbar = () => {
         <li><Link href="me" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">me</Link></li>
         <li><Link href="guidelines" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full" >guidelines</Link></li>
         <li><Link href="about" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">about</Link></li>
+        {data?.user?.role === EUserRole.ADMIN.toLowerCase() ? <li><Link href="dashboard" className="relative inline-block max-md:hidden after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full">dashboard</Link></li> : null
+        }
       </ul>
 
       <div className="flex items-center justify-center gap-2">
-        {session ? (
+        {data ? (
           <div className="flex justify-center items-center gap-3">
             <Button asChild>
               <Link href="/upload">Upload</Link>
