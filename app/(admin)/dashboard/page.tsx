@@ -1,6 +1,5 @@
 "use client";
 import { useQuery } from '@tanstack/react-query';
-import { User } from 'better-auth';
 import { useState } from 'react';
 import {
   Pagination,
@@ -10,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import DataTable from './DataTable';
 import { columns } from './columns';
+import { User } from '@/db/schema';
 
 type TResponse = {
   success?: boolean;
@@ -39,41 +39,40 @@ export default function MyPaginatedComponent() {
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
 
+  console.log(data)
 
   return (
-    <main className='p-8 flex items-center flex-col gap-4'>
+    <main>
       <DataTable columns={columns} data={data?.users || []} />
-      <aside>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <Button
+              variant="secondary"
+              className={`cursor-pointer ${page === 1 ? "invisible" : ""}`}
+              onClick={() => { if (page > 1) { setPage(prev => prev - 1) } }}
+            >
+              Previous
+            </Button>
+          </PaginationItem>
+          <PaginationItem>
+            <Button variant="secondary" className='cursor-pointer' disabled>
+              {page}
+            </Button>
+          </PaginationItem>
+          <PaginationItem>
+            {data && data.totalPages > page && (
               <Button
                 variant="secondary"
-                className={`cursor-pointer ${page === 1 ? "invisible" : ""}`}
-                onClick={() => { if (page > 1) { setPage(prev => prev - 1) } }}
+                className='cursor-pointer'
+                onClick={() => setPage(prev => prev + 1)}
               >
-                Previous
+                Next
               </Button>
-            </PaginationItem>
-            <PaginationItem>
-              <Button variant="secondary" className='cursor-pointer' disabled>
-                {page}
-              </Button>
-            </PaginationItem>
-            <PaginationItem>
-              {data && data.totalPages > page && (
-                <Button
-                  variant="secondary"
-                  className='cursor-pointer'
-                  onClick={() => setPage(prev => prev + 1)}
-                >
-                  Next
-                </Button>
-              )}
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </aside >
+            )}
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </main>
   );
 }

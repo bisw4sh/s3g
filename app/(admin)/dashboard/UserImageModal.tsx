@@ -14,10 +14,10 @@ import Image from "next/image"
 interface UserImageModalProps {
   user: User
   isOpen: boolean
-  onClose: () => void
+  onCloseAction: () => void
 }
 
-export default function UserImageModal({ user, isOpen, onClose }: UserImageModalProps) {
+export default function UserImageModal({ user, isOpen, onCloseAction }: UserImageModalProps) {
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -28,12 +28,12 @@ export default function UserImageModal({ user, isOpen, onClose }: UserImageModal
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onCloseAction}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserIcon className="h-5 w-5" />
-            {user.name || user.email}'s Images
+            {user.name || user.email}&apos;s Images
           </DialogTitle>
         </DialogHeader>
 
@@ -67,8 +67,9 @@ export default function UserImageModal({ user, isOpen, onClose }: UserImageModal
                     <Image
                       src={user.image}
                       alt="Profile"
-                      width={500} height={500}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center flex-col gap-2 text-muted-foreground">
@@ -93,9 +94,10 @@ export default function UserImageModal({ user, isOpen, onClose }: UserImageModal
                   {user.coverUrl ? (
                     <Image
                       src={user.coverUrl}
-                      width={500} height={500}
                       alt="Cover"
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center flex-col gap-2 text-muted-foreground">

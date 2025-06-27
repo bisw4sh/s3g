@@ -9,17 +9,17 @@ import { sql } from "drizzle-orm/sql";
 
 export async function GET(request: NextRequest) {
   try {
-    // const session = await auth.api.getSession({
-    //   query: { disableCookieCache: true },
-    //   headers: request.headers,
-    // }) as AuthSession;
-    //
-    // if (!session?.user?.role || session.user.role !== EUserRole.ADMIN) {
-    //   return Response.json(
-    //     { error: "Unauthorized: Admin privileges required" },
-    //     { status: 403 }
-    //   )
-    // }
+    const session = await auth.api.getSession({
+      query: { disableCookieCache: true },
+      headers: request.headers,
+    }) as AuthSession;
+
+    if (!session?.user?.role || session.user.role !== EUserRole.ADMIN) {
+      return Response.json(
+        { error: "Unauthorized: Admin privileges required" },
+        { status: 403 }
+      )
+    }
 
     const url = request.nextUrl;
     const roleParam = url.searchParams.get("role");

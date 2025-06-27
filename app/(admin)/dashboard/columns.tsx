@@ -3,8 +3,8 @@ import { User } from "@/db/schema"
 import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { Eye } from "lucide-react"
-import { useState } from "react"
 import UserImageModal from "./UserImageModal"
+import { useState } from "react"
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -66,7 +66,7 @@ function ActionCell({ user }: { user: User }) {
         variant="outline"
         size="sm"
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center gap-2 cursor-pointer"
+        className="flex items-center gap-2"
       >
         <Eye className="h-4 w-4" />
         View Images
@@ -75,7 +75,7 @@ function ActionCell({ user }: { user: User }) {
       <UserImageModal
         user={user}
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onCloseAction={() => setIsModalOpen(false)}
       />
     </>
   )

@@ -84,6 +84,7 @@ export default function Me() {
         queryKey: ["home-photos"],
       });
     } catch (error) {
+      console.error(error)
       toast("couldn't delete")
     }
   }
