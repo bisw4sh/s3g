@@ -110,6 +110,7 @@ export default function UserImageModal({ user, isOpen, onCloseAction }: UserImag
       await queryClient.invalidateQueries({ queryKey: ["users"] });
       toast(`${values.action} successfully`)
     } catch (error) {
+      console.error(error)
       toast.error(`couldn't complete the ${values.action} action`)
     }
   }
