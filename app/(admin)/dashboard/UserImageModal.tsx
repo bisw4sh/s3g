@@ -10,6 +10,27 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { User as UserIcon, ImageIcon } from "lucide-react"
 import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Separator } from "@/components/ui/separator"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import z from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { authClient } from "@/lib/auth-client"
+import { EUserRole } from "@/types/common/roles"
+import { toast } from "sonner"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface UserImageModalProps {
   user: User
@@ -17,7 +38,20 @@ interface UserImageModalProps {
   onCloseAction: () => void
 }
 
+const roleSchema = z.object({
+  role: z.nativeEnum(EUserRole)
+})
+
+const actionSchema = z.object({
+  action: z.enum(["ban", "delete", "impersonate"])
+})
+
+type TAction = z.infer<typeof actionSchema>
+type TRole = z.infer<typeof roleSchema>
+
 export default function UserImageModal({ user, isOpen, onCloseAction }: UserImageModalProps) {
+  const queryClient = useQueryClient();
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -27,13 +61,66 @@ export default function UserImageModal({ user, isOpen, onCloseAction }: UserImag
       .slice(0, 2)
   }
 
+  const roleForm = useForm<z.infer<typeof roleSchema>>({
+    resolver: zodResolver(roleSchema),
+  })
+
+  const actionForm = useForm<z.infer<typeof actionSchema>>({
+    resolver: zodResolver(actionSchema)
+  })
+
+  const onRoleFormSubmit = async (values: TRole) => {
+    try {
+      await authClient.admin.setRole({
+        userId: user.id,
+        role: values.role,
+      });
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success("Successfully updated role");
+    } catch (error) {
+      console.error(error);
+      toast.error("Couldn't update the role");
+    }
+  }
+  const onActionFormSubmit = async (values: TAction) => {
+    try {
+      switch (values.action) {
+        case "ban":
+          await authClient.admin.banUser({
+            userId: user.id,
+            banReason: "Admin decided",
+          });
+          break;
+
+        case "impersonate":
+          await authClient.admin.impersonateUser({
+            userId: user.id,
+          });
+          break;
+
+        case "delete":
+          await authClient.admin.removeUser({
+            userId: user.id,
+          });
+          break;
+
+        default:
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast(`${values.action} successfully`)
+    } catch (error) {
+      toast.error(`couldn't complete the ${values.action} action`)
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onCloseAction}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserIcon className="h-5 w-5" />
-            {user.name || user.email}&apos;s Images
+            {user.name || user.email}&apos;s Panel
           </DialogTitle>
         </DialogHeader>
 
@@ -47,7 +134,8 @@ export default function UserImageModal({ user, isOpen, onCloseAction }: UserImag
               </AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-semibold">{user.name || "No name"}</h3>
+
+              <h3 className="font-semibold">{user.name || "No name"} {` [${user?.role}]`}</h3>
               <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
           </div>
@@ -108,34 +196,75 @@ export default function UserImageModal({ user, isOpen, onCloseAction }: UserImag
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          {/* Image URLs (for debugging/reference) */}
-          {(user.image || user.coverUrl) && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Image URLs</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {user.image && (
-                  <div>
-                    <p className="text-sm font-medium">Profile:</p>
-                    <p className="text-xs text-muted-foreground break-all bg-muted p-2 rounded">
-                      {user.image}
-                    </p>
-                  </div>
+            <Form {...roleForm} >
+              <form onSubmit={roleForm.handleSubmit(onRoleFormSubmit)} className="space-y-8 col-span-2">
+                <FormField
+                  control={roleForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger className="w-full cursor-pointer">
+                            <SelectValue placeholder="ROLES" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Pick the role for the user</SelectLabel>
+                              <SelectItem value={EUserRole.USER} className="cursor-pointer">User</SelectItem>
+                              <SelectItem value={EUserRole.ADMIN} className="cursor-pointer">Admin</SelectItem>
+                              {/* <SelectItem value={EUserRole.MOD} className="cursor-pointer">Moderator</SelectItem> */}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="cursor-pointer w-full row-span-2">Change role</Button>
+              </form>
+            </Form>          </div>
+
+          <Separator />
+
+          <Form {...actionForm} >
+            <form onSubmit={actionForm.handleSubmit(onActionFormSubmit)} className="space-y-8 col-span-2">
+              <FormField
+                control={actionForm.control}
+                name="action"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Action</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-row justify-around items-center">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="ban" id="ban" />
+                          <Label htmlFor="ban">Ban User</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="delete" id="delete" />
+                          <Label htmlFor="delete">Delete User</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="impersonate" id="impersonate" />
+                          <Label htmlFor="impersonate">Impersonate User</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-                {user.coverUrl && (
-                  <div>
-                    <p className="text-sm font-medium">Cover:</p>
-                    <p className="text-xs text-muted-foreground break-all bg-muted p-2 rounded">
-                      {user.coverUrl}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+              />
+              <Button type="submit" className="cursor-pointer w-full row-span-2" variant="destructive">Act</Button>
+            </form>
+          </Form>
+
         </div>
       </DialogContent>
     </Dialog>
