@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import DataTable from './DataTable';
 import { columns } from './columns';
 import { User } from '@/db/schema';
-import { Spinner } from '@/components/Loader';
 import { LoaderScreen } from '@/components/LoaderScreen';
 
 type TResponse = {
@@ -28,7 +27,7 @@ export default function MyPaginatedComponent() {
   const limit = 10
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['projects', page],
+    queryKey: ['users', page],
     queryFn: async (): Promise<TResponse> => {
       const response = await fetch(`/api/admin/users?page=${page}&limit=${limit}`);
       if (!response.ok) {
@@ -40,8 +39,6 @@ export default function MyPaginatedComponent() {
 
   if (isLoading) return <LoaderScreen />;
   if (isError) return <div>Error: {error.message}</div>;
-
-  console.log(data)
 
   return (
     <main className='p-8 flex flex-col items-center gap-6'>

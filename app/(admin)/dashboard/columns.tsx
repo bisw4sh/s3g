@@ -66,10 +66,10 @@ function ActionCell({ user }: { user: User }) {
         variant="outline"
         size="sm"
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 cursor-pointer"
       >
         <Eye className="h-4 w-4" />
-        View Images
+        Action
       </Button>
 
       <UserImageModal

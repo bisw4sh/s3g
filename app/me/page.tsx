@@ -124,10 +124,10 @@ export default function Me() {
 
       {/* Profile Actions */}
       <div className="lg:px-[6rem] max-lg:pt-[4rem] p-4 lg:py-4 flex justify-start gap-6 bg-[#9ABBFF] rounded-b-lg">
-        <Link href="/change-password" className="hover:underline font-medium">
+        <Link href="/change-password" className="hover:underline font-medium underline-offset-4">
           Change Password
         </Link>
-        <Link href="/edit-profile" className="hover:underline font-medium">
+        <Link href="/edit-profile" className="hover:underline font-medium underline-offset-4">
           Edit Profile
         </Link>
       </div>
