@@ -1,7 +1,6 @@
 export enum EUserRole {
-  ADMIN = "ADMIN",
-  USER = "USER",
-  MOD = "MOD",
+  ADMIN = "admin",
+  USER = "user",
 }
 
 export const UserRoleArray = Object.values(EUserRole);
