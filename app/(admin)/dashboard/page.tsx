@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import DataTable from './DataTable';
 import { columns } from './columns';
 import { User } from '@/db/schema';
+import { Spinner } from '@/components/Loader';
+import { LoaderScreen } from '@/components/LoaderScreen';
 
 type TResponse = {
   success?: boolean;
@@ -36,7 +38,7 @@ export default function MyPaginatedComponent() {
     },
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoaderScreen />;
   if (isError) return <div>Error: {error.message}</div>;
 
   console.log(data)

@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Photo } from "@/db/schema";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { Spinner } from "@/components/Loader";
+import { LoaderScreen } from "@/components/LoaderScreen";
 
 const LIMIT = 6;
 
@@ -57,7 +59,7 @@ export default function Home() {
 
   const allPhotos = data?.pages.flatMap((page) => page.data) ?? [];
 
-  if (status === "pending") return <p>Loading...</p>;
+  if (status === "pending") return <LoaderScreen />;
   if (error) return <p>Error fetching images</p>;
 
   return (
@@ -82,8 +84,8 @@ export default function Home() {
         ))}
       </div>
 
-      <div ref={observerRef} className="h-10 flex justify-center items-center">
-        {isFetchingNextPage && <p>LOADING MORE</p>}
+      <div ref={observerRef} className="h-64 flex justify-center items-center">
+        {isFetchingNextPage && <Spinner />}
       </div>
     </main>
   );
