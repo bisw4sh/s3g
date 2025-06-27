@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       headers: request.headers,
     }) as AuthSession;
 
-    if (!session?.user?.role || session.user.role !== EUserRole.ADMIN) {
+    if (!session?.user?.role || session.user.role !== EUserRole.ADMIN.toLowerCase()) {
       return Response.json(
         { error: "Unauthorized: Admin privileges required" },
         { status: 403 }

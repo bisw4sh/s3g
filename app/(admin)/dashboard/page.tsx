@@ -42,7 +42,7 @@ export default function MyPaginatedComponent() {
   console.log(data)
 
   return (
-    <main>
+    <main className='p-8 flex flex-col items-center gap-6'>
       <DataTable columns={columns} data={data?.users || []} />
       <Pagination>
         <PaginationContent>
