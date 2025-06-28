@@ -8,7 +8,7 @@
 
 [] framer-motion for animate presence.
 
-[] authenticated means you're eligible for likes, admin who can upload and delete, and unauthenticated can only see on what is available.
+[-] authenticated means you're eligible for likes, uploads, deleting own images, admin can do everything of user and can ban, change roles of user, impersonate, delete user, delete other's images, and unauthenticated can only see on what is available(photo and likes).
 
 [-] infinite query using react-query.
 
