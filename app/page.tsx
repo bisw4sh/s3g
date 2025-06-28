@@ -201,10 +201,16 @@ export default function Home() {
                 height={300}
               />
               <section className="flex gap-2">
-                {photo?.likes?.liked ?
-                  <FaHeart className="h-6 w-6 fill-red-600 cursor-pointer hover:scale-110"
-                    onClick={() => handleUnLike(photo.url)} /> :
-                  <Heart onClick={() => handleLike(photo.url)} className="cursor-pointer hover:stroke-red-600" />}
+
+                {session?.data ?
+                  (photo?.likes?.liked ?
+                    <FaHeart className="h-6 w-6 fill-red-600 cursor-pointer hover:scale-110"
+                      onClick={() => handleUnLike(photo.url)} />
+                    :
+                    <Heart onClick={() => handleLike(photo.url)} className="cursor-pointer hover:stroke-red-600" />)
+                  :
+                  <FaHeart className="h-6 w-6 fill-red-600" />}
+
                 <div>{photo?.likes?.count}</div>
               </section>
               {session?.data?.user?.role === EUserRole.ADMIN &&
