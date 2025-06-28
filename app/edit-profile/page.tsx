@@ -164,7 +164,6 @@ const UploadPage = () => {
       if (!result.success) {
         throw new Error(result.error || "Failed to save profile");
       }
-
       toast("Upload successful!");
       router.push("/me");
     } catch (error) {
