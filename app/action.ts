@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/db";
-import { photoLikes } from "@/db/schema";
+import { notifications, photoLikes, photosTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -23,6 +23,33 @@ export async function likeAPhoto({ url }: { url: string }) {
       .returning();
 
     const isNewLike = likedPhoto.length > 0;
+
+    if (isNewLike) {
+      const photo = await db
+        .select({ ownerId: photosTable.createdBy })
+        .from(photosTable)
+        .where(eq(photosTable.url, url))
+        .limit(1)
+        .then(rows => rows[0]);
+
+      if (!photo) {
+        return {
+          success: false,
+          error: "Photo not found",
+        };
+      }
+
+      if (photo.ownerId !== session.user.id) {
+        await db.insert(notifications).values({
+          type: "like",
+          title: `${session.user.name} liked your picture`,
+          description: `User ${session.user.name} liked your image on ${new Date().toLocaleString()}`,
+          notificationOf: photo.ownerId,
+        });
+      }
+
+    }
+
     return {
       success: true,
       message: isNewLike ? "Image liked" : "Already liked",
