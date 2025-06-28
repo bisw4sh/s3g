@@ -36,7 +36,9 @@ export async function savePhoto({
       profileUrl: string;
     }> = {};
 
-    if (name !== undefined || name !== "") updateData.name = name;
+    if (name && name.trim() !== "") {
+      updateData.name = name;
+    }
     if (coverUrl !== undefined) updateData.coverUrl = coverUrl;
     if (profileUrl !== undefined) updateData.profileUrl = profileUrl;
 
