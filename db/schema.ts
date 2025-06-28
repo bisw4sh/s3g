@@ -1,5 +1,5 @@
 import { EUserRole } from "@/types/common/roles";
-import { pgTable, varchar, text, timestamp, boolean, primaryKey, index } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, timestamp, boolean, primaryKey, index, serial, pgEnum } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -82,6 +82,27 @@ export const verifications = pgTable("verifications", {
   updatedAt: timestamp("updatedAt").defaultNow(),
 });
 
+export const notificationTypeEnum = pgEnum("notification_type", [
+  "global",
+  "specific",
+  "warning",
+  "info",
+  "alert",
+  "like",
+]);
+
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  type: notificationTypeEnum("type").notNull(),
+  title: varchar("title", { length: 49 }).notNull(),
+  description: varchar("description", { length: 500 }).notNull(),
+  readStatus: boolean("readStatus").default(false),
+  notificationOf: text("notificationOf").notNull().references(() => users.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+});
+
 export const schema = {
   users,
   sessions,
@@ -98,3 +119,4 @@ export type NewSession = typeof sessions.$inferInsert;
 export type Photo = typeof photosTable.$inferSelect;
 export type NewPhoto = typeof photosTable.$inferInsert;
 export type Likes = typeof photoLikes.$inferInsert;
+export type Notification = typeof notifications.$inferInsert;
