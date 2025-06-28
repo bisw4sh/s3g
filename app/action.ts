@@ -9,21 +9,23 @@ export async function likeAPhoto({ url }: { url: string }) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
 
-    if (!session || !session.user?.id) {
+    if (!session?.user?.id) {
       return {
         success: false,
         error: "Missing session or user ID",
       };
     }
 
-    await db
+    const likedPhoto = await db
       .insert(photoLikes)
       .values({ photoUrl: url, userId: session.user.id })
-      .onConflictDoNothing();
+      .onConflictDoNothing()
+      .returning();
 
+    const isNewLike = likedPhoto.length > 0;
     return {
       success: true,
-      message: "Image liked",
+      message: isNewLike ? "Image liked" : "Already liked",
     };
   } catch (error) {
     console.error("like error:", error);
@@ -33,7 +35,6 @@ export async function likeAPhoto({ url }: { url: string }) {
     };
   }
 }
-
 
 export async function unLikeAPhoto({ url }: { url: string }) {
   try {
@@ -57,7 +58,7 @@ export async function unLikeAPhoto({ url }: { url: string }) {
 
     return {
       success: true,
-      message: "Image liked",
+      message: "Image like removed",
     };
 
   } catch (error) {
