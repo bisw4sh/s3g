@@ -10,6 +10,7 @@ import { Heart, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { EUserRole } from "@/types/common/roles";
 import { likeAPhoto, unLikeAPhoto } from "./action";
+import { FaHeart } from "react-icons/fa";
 
 const LIMIT = 6;
 
@@ -60,7 +61,8 @@ export default function Home() {
     initialPageParam: 1,
   });
 
-  const { mutateAsync: deletePhoto, isPending } = useDeleteAdminPhoto();
+  const queryClient = useQueryClient();
+
   function useDeleteAdminPhoto() {
     const queryClient = useQueryClient();
 
@@ -76,6 +78,7 @@ export default function Home() {
     });
   }
 
+  const { mutateAsync: deletePhoto, isPending } = useDeleteAdminPhoto();
   const session = useSession()
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -101,7 +104,6 @@ export default function Home() {
   const handleDelete = async (url: string) => {
     try {
       if (session?.data?.user?.role !== EUserRole.ADMIN) return;
-
       await deletePhoto({ url });
     } catch (error) {
       console.error(error);
@@ -111,18 +113,72 @@ export default function Home() {
   const handleLike = async (url: string) => {
     try {
       await likeAPhoto({ url });
+
+      queryClient.setQueryData(["home-photos"], (oldData: typeof data) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            data: page.data.map((photo) => {
+              if (photo.url === url) {
+                return {
+                  ...photo,
+                  likes: {
+                    ...photo.likes,
+                    liked: true,
+                    count: photo.likes.count + 1,
+                  },
+                };
+              }
+              return photo;
+            }),
+          })),
+        };
+      });
+
+      toast.success("Liked the image");
     } catch (error) {
+      toast.error("Couldn't like the image");
       console.error(error);
     }
-  }
+  };
 
   const handleUnLike = async (url: string) => {
     try {
       await unLikeAPhoto({ url });
+
+      queryClient.setQueryData(["home-photos"], (oldData: typeof data) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            data: page.data.map((photo) => {
+              if (photo.url === url) {
+                return {
+                  ...photo,
+                  likes: {
+                    ...photo.likes,
+                    liked: false,
+                    count: Math.max(0, photo.likes.count - 1),
+                  },
+                };
+              }
+              return photo;
+            }),
+          })),
+        };
+      });
+
+      toast.success("Unliked the image");
     } catch (error) {
+      toast.error("Couldn't unlike the image");
       console.error(error);
     }
-  }
+  };
 
   if (status === "pending") return <LoaderScreen />;
   if (error) return <p>Error fetching images</p>;
@@ -131,36 +187,41 @@ export default function Home() {
   return (
     <main className="w-full min-h-screen px-2 sm:px-8 md:px-16 lg:px-32 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {allPhotos.map((photo) => (
-          <div
-            key={photo.url}
-            className="relative group border p-4 rounded-md shadow bg-white"
-          >
-            <Image
-              src={photo.url}
-              alt={photo.title}
-              className="w-full h-64 object-cover mb-2 rounded-md"
-              width={400}
-              height={300}
-            />
-            <section className="flex gap-2">
-              {photo?.likes?.liked ? <Heart className="stroke-red-600" onClick={() => handleLike(photo.url)} /> : <Heart onClick={() => handleUnLike(photo.url)} />}
-              <div>{photo?.likes?.count}</div>
-            </section>
-            {session?.data?.user?.role === EUserRole.ADMIN &&
-              <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Trash
-                  className="text-red-500 hover:stroke-red-600 hover:scale-110 cursor-pointer"
-                  onClick={() => handleDelete(photo.url)}
-                />
-              </div>
-            }
+        {allPhotos.map((photo) => {
+          return (
+            <div
+              key={photo.url}
+              className="relative group border p-4 rounded-md shadow bg-white"
+            >
+              <Image
+                src={photo.url}
+                alt={photo.title}
+                className="w-full h-64 object-cover mb-2 rounded-md"
+                width={400}
+                height={300}
+              />
+              <section className="flex gap-2">
+                {photo?.likes?.liked ?
+                  <FaHeart className="h-6 w-6 fill-red-600 cursor-pointer hover:scale-110"
+                    onClick={() => handleUnLike(photo.url)} /> :
+                  <Heart onClick={() => handleLike(photo.url)} className="cursor-pointer hover:stroke-red-600" />}
+                <div>{photo?.likes?.count}</div>
+              </section>
+              {session?.data?.user?.role === EUserRole.ADMIN &&
+                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Trash
+                    className="text-red-500 hover:stroke-red-600 hover:scale-110 cursor-pointer"
+                    onClick={() => handleDelete(photo.url)}
+                  />
+                </div>
+              }
 
-            <h2 className="text-xl font-semibold">{photo.title}</h2>
-            <p className="text-gray-600">{photo.description}</p>
-            <p className="text-sm text-gray-500 mt-1">By: {photo.author}</p>
-          </div>
-        ))}
+              <h2 className="text-xl font-semibold">{photo.title}</h2>
+              <p className="text-gray-600">{photo.description}</p>
+              <p className="text-sm text-gray-500 mt-1">By: {photo.author}</p>
+            </div>
+          )
+        })}
       </div>
 
       <div ref={observerRef} className="h-64 flex justify-center items-center">
