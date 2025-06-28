@@ -3,9 +3,11 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@/components/Loader";
 import { LoaderScreen } from "@/components/LoaderScreen";
-import { Notification } from "@/db/schema"
+import { Notification } from "@/db/schema";
+import { Heart } from "lucide-react";
+import { format } from "date-fns";
 
-const limit = 10
+const limit = 10;
 
 const fetchNotifications = async ({ pageParam = 1 }): Promise<{
   data: Notification[];
@@ -15,29 +17,26 @@ const fetchNotifications = async ({ pageParam = 1 }): Promise<{
   page: number;
   totalPages: number;
 }> => {
-  const notifications = await fetch(`/api/notifications?page=${pageParam}&limit=${limit}`)
-  if (!notifications.ok) {
-    throw new Error("Couldn't fetch the notifications")
+  const res = await fetch(`/api/notifications?page=${pageParam}&limit=${limit}`);
+  if (!res.ok) {
+    throw new Error("Couldn't fetch the notifications");
   }
-  return notifications.json()
-}
+  return res.json();
+};
 
-export default function Home() {
+export default function NotificationPage() {
   const {
     data,
     error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isPending
+    isPending,
   } = useInfiniteQuery({
     queryKey: ["notifications"],
     queryFn: fetchNotifications,
     getNextPageParam: (lastPage) => {
-      if (lastPage.page < lastPage.totalPages) {
-        return lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined;
-      }
-      return undefined;
+      return lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined;
     },
     initialPageParam: 1,
   });
@@ -63,59 +62,48 @@ export default function Home() {
 
   const allNotifications = data?.pages.flatMap((page) => page.data) ?? [];
 
-  // const handleMarkAsRead = async (d: string) => {
-  //   try {
-  //     await likeAPhoto({ url });
-  //
-  //     queryClient.setQueryData(["home-photos"], (oldData: typeof data) => {
-  //       if (!oldData) return oldData;
-  //
-  //       return {
-  //         ...oldData,
-  //         pages: oldData.pages.map((page) => ({
-  //           ...page,
-  //           data: page.data.map((photo) => {
-  //             if (photo.url === url) {
-  //               return {
-  //                 ...photo,
-  //                 likes: {
-  //                   ...photo.likes,
-  //                   liked: true,
-  //                   count: photo.likes.count + 1,
-  //                 },
-  //               };
-  //             }
-  //             return photo;
-  //           }),
-  //         })),
-  //       };
-  //     });
-  //
-  //     toast.success("Liked the image");
-  //   } catch (error) {
-  //     toast.error("Couldn't like the image");
-  //     console.error(error);
-  //   }
-  // };
-
-
   if (isPending) return <LoaderScreen />;
-  if (error) return <div className="min-h-screen flex justify-center items-center">Error fetching notifications</div>;
+  if (error)
+    return (
+      <div className="min-h-screen flex justify-center items-center text-red-500">
+        Error fetching notifications
+      </div>
+    );
 
   return (
-    <main className="w-full min-h-screen px-2 sm:px-8 md:px-16 lg:px-32 py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <main className="w-full min-h-screen px-4 sm:px-8 md:px-16 lg:px-32 py-6 bg-white dark:bg-gray-950">
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+        Notifications
+      </h1>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {allNotifications.map((notification) => (
-          <p key={notification.id}>{notification.id}</p>
+          <div
+            key={notification.id}
+            className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm p-4 flex gap-4 items-start border border-gray-200 dark:border-gray-800"
+          >
+            <div className="text-pink-500 dark:text-pink-400 mt-1">
+              {notification.type === "like" && <Heart className="w-5 h-5" />}
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-800 dark:text-white">
+                {notification.title}
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                {notification.description}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                {format(new Date(notification.createdAt as Date), "PPpp")}
+              </p>
+            </div>
+          </div>
         ))}
-
       </div>
 
-      <div ref={observerRef} className="h-64 flex justify-center items-center">
+      <div ref={observerRef} className="h-24 flex justify-center items-center">
         {isFetchingNextPage && <Spinner />}
       </div>
-    </main >
+    </main>
   );
 }
 
