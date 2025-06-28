@@ -4,13 +4,15 @@
 
 [-] Authentication with betterAuth in my neon postgresql db using drizzle.
 
-[] TailwindCSS will be custom color where i will modify using color palette, no dark modes using[tweakcn](https://tweakcn.com/). 
+[-] TailwindCSS will be custom color where i will modify using color palette, no dark modes using[tweakcn](https://tweakcn.com/). 
 
 [] framer-motion for animate presence.
 
 [] authenticated means you're eligible for likes, admin who can upload and delete, and unauthenticated can only see on what is available.
 
-[] infinite query using react-query.
+[-] infinite query using react-query.
+
+[-] notification and web push notification.
 
 ```
 Things to configure in AWS S3.
