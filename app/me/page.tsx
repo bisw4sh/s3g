@@ -35,7 +35,7 @@ export default function Me() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["home-photos"],
+    queryKey: ["my-photos"],
     queryFn: fetchPhotos,
     getNextPageParam: (lastPage) => {
       if (lastPage.page < lastPage.totalPages) {
@@ -81,7 +81,7 @@ export default function Me() {
 
       toast(result.message)
       queryClient.invalidateQueries({
-        queryKey: ["home-photos"],
+        queryKey: ["my-photos"],
       });
     } catch (error) {
       console.error(error)

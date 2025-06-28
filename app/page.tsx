@@ -1,10 +1,14 @@
 "use client";
 import Image from "next/image";
 import { Photo } from "@/db/schema";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@/components/Loader";
 import { LoaderScreen } from "@/components/LoaderScreen";
+import { useSession } from "@/lib/auth-client";
+import { Trash } from "lucide-react";
+import { toast } from "sonner";
+import { EUserRole } from "@/types/common/roles";
 
 const LIMIT = 6;
 
@@ -16,6 +20,16 @@ async function fetchPhotos({ pageParam = 1 }): Promise<{
   const res = await fetch(`/api/home?page=${pageParam}&limit=${LIMIT}`);
   if (!res.ok) throw new Error("Failed to fetch images");
   return res.json();
+}
+
+async function deletePhotoForAdmin({ url }: { url: string }) {
+  const res = await fetch(`/api/admin/delete-photos`, {
+    method: "POST",
+    body: JSON.stringify({ url })
+  })
+  if (!res.ok) throw new Error("Failed to delete image")
+
+  return res.json()
 }
 
 export default function Home() {
@@ -38,6 +52,23 @@ export default function Home() {
     initialPageParam: 1,
   });
 
+  const { mutateAsync: deletePhoto, isPending } = useDeleteAdminPhoto();
+  function useDeleteAdminPhoto() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+      mutationFn: deletePhotoForAdmin,
+      onSuccess: (data) => {
+        toast(data.message || "Photo deleted");
+        queryClient.invalidateQueries({ queryKey: ["home-photos"] });
+      },
+      onError: (err: Error) => {
+        toast(err.message || "Could not delete photo");
+      },
+    });
+  }
+
+  const session = useSession()
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -59,8 +90,19 @@ export default function Home() {
 
   const allPhotos = data?.pages.flatMap((page) => page.data) ?? [];
 
+  const handleDelete = async (url: string) => {
+    try {
+      if (session?.data?.user?.role !== EUserRole.ADMIN) return;
+
+      await deletePhoto({ url });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   if (status === "pending") return <LoaderScreen />;
   if (error) return <p>Error fetching images</p>;
+  if (isPending) return toast("deleting")
 
   return (
     <main className="w-full min-h-screen px-2 sm:px-8 md:px-16 lg:px-32 py-4">
@@ -68,7 +110,7 @@ export default function Home() {
         {allPhotos.map((photo) => (
           <div
             key={photo.url}
-            className="border p-4 rounded-md shadow bg-white"
+            className="relative group border p-4 rounded-md shadow bg-white"
           >
             <Image
               src={photo.url}
@@ -77,6 +119,15 @@ export default function Home() {
               width={400}
               height={300}
             />
+            {session?.data?.user?.role === EUserRole.ADMIN &&
+              <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Trash
+                  className="text-red-500 hover:stroke-red-600 hover:scale-110 cursor-pointer"
+                  onClick={() => handleDelete(photo.url)}
+                />
+              </div>
+            }
+
             <h2 className="text-xl font-semibold">{photo.title}</h2>
             <p className="text-gray-600">{photo.description}</p>
             <p className="text-sm text-gray-500 mt-1">By: {photo.author}</p>
@@ -87,7 +138,7 @@ export default function Home() {
       <div ref={observerRef} className="h-64 flex justify-center items-center">
         {isFetchingNextPage && <Spinner />}
       </div>
-    </main>
+    </main >
   );
 }
 
