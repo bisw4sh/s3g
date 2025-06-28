@@ -18,9 +18,8 @@ export async function GET(req: NextRequest) {
       headers: req.headers,
     }) as AuthSession;
 
-    const userId = session?.userId;
-
     const offset = (page - 1) * limit;
+    const userId = session?.user.id;
 
     const photosQuery = db
       .select({
@@ -53,7 +52,7 @@ export async function GET(req: NextRequest) {
     const photos = photosResult.map(({ photo, likeCount, userLiked }) => ({
       ...photo,
       likes: {
-        count: likeCount,
+        count: +likeCount,
         liked: userLiked,
       },
     }));
@@ -63,7 +62,7 @@ export async function GET(req: NextRequest) {
       data: photos,
       page,
       limit,
-      count,
+      count: +count,
       totalPages: Math.ceil(count / limit),
     });
   } catch (error) {
