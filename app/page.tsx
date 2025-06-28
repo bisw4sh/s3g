@@ -6,14 +6,22 @@ import { useEffect, useRef } from "react";
 import { Spinner } from "@/components/Loader";
 import { LoaderScreen } from "@/components/LoaderScreen";
 import { useSession } from "@/lib/auth-client";
-import { Trash } from "lucide-react";
+import { Heart, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { EUserRole } from "@/types/common/roles";
+import { likeAPhoto, unLikeAPhoto } from "./action";
 
 const LIMIT = 6;
 
+type ModifiedPhotoData = Photo & {
+  likes: {
+    count: number,
+    liked: boolean,
+  }
+}
+
 async function fetchPhotos({ pageParam = 1 }): Promise<{
-  data: Photo[];
+  data: ModifiedPhotoData[];
   page: number;
   totalPages: number;
 }> {
@@ -100,6 +108,22 @@ export default function Home() {
     }
   };
 
+  const handleLike = async (url: string) => {
+    try {
+      await likeAPhoto({ url });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleUnLike = async (url: string) => {
+    try {
+      await unLikeAPhoto({ url });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   if (status === "pending") return <LoaderScreen />;
   if (error) return <p>Error fetching images</p>;
   if (isPending) return toast("deleting")
@@ -119,6 +143,10 @@ export default function Home() {
               width={400}
               height={300}
             />
+            <section className="flex gap-2">
+              {photo?.likes?.liked ? <Heart className="stroke-red-600" onClick={() => handleLike(photo.url)} /> : <Heart onClick={() => handleUnLike(photo.url)} />}
+              <div>{photo?.likes?.count}</div>
+            </section>
             {session?.data?.user?.role === EUserRole.ADMIN &&
               <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Trash
