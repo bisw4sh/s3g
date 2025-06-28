@@ -1,5 +1,5 @@
 import { EUserRole } from "@/types/common/roles";
-import { pgTable, varchar, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, timestamp, boolean, primaryKey, index } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -28,6 +28,23 @@ export const photosTable = pgTable("photos", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
+
+export const photoLikes = pgTable(
+  "photo_likes",
+  {
+    photoUrl: varchar("photoUrl")
+      .notNull()
+      .references(() => photosTable.url, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    likedAt: timestamp("likedAt").defaultNow().notNull(),
+  },
+  (table) => [
+    index("photo_likes_idx").on(table.photoUrl, table.userId),
+    primaryKey({ columns: [table.photoUrl, table.userId] }),
+  ]
+);
 
 export const sessions = pgTable("sessions", {
   id: text("id").primaryKey(),
@@ -80,3 +97,4 @@ export type NewSession = typeof sessions.$inferInsert;
 
 export type Photo = typeof photosTable.$inferSelect;
 export type NewPhoto = typeof photosTable.$inferInsert;
+export type Likes = typeof photoLikes.$inferInsert;
