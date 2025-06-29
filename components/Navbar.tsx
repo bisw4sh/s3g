@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import S3GLogo from "./S3GLogo"
-import { authClient } from "@/lib/auth-client"
+import { authClient, useSession } from "@/lib/auth-client"
 import { ArrowUpFromLine, Bell, LogOut } from "lucide-react"
 import {
   Tooltip,
@@ -29,9 +29,12 @@ const Navbar = () => {
   } = authClient.useSession()
   const router = useRouter()
 
+  const session = useSession();
+
   const { data: count, isError, isPending } = useQuery({
     queryKey: ["notification-count"],
-    queryFn: getNotificationCount
+    queryFn: getNotificationCount,
+    enabled: !!session?.data?.user?.id,
   })
 
   useEffect(() => {
