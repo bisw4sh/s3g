@@ -4,6 +4,7 @@ import { notifications, photoLikes, photosTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { title } from "process";
 
 export async function likeAPhoto({ url }: { url: string }) {
   try {
@@ -26,7 +27,7 @@ export async function likeAPhoto({ url }: { url: string }) {
 
     if (isNewLike) {
       const photo = await db
-        .select({ ownerId: photosTable.createdBy })
+        .select({ ownerId: photosTable.createdBy, title: photosTable.title })
         .from(photosTable)
         .where(eq(photosTable.url, url))
         .limit(1)
@@ -42,7 +43,7 @@ export async function likeAPhoto({ url }: { url: string }) {
       if (photo.ownerId !== session.user.id) {
         await db.insert(notifications).values({
           type: "like",
-          title: `${session.user.name} liked your picture`,
+          title: `${session.user.name} liked your picture ${photo?.title}`,
           description: `User ${session.user.name} liked your image on ${new Date().toLocaleString()}`,
           notificationOf: photo.ownerId,
         });
