@@ -3,7 +3,7 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@/components/Loader";
 import { LoaderScreen } from "@/components/LoaderScreen";
-import { Notification, notifications } from "@/db/schema";
+import { Notification } from "@/db/schema";
 import { Heart } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";

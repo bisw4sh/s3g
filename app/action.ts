@@ -4,7 +4,6 @@ import { notifications, photoLikes, photosTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
-import { title } from "process";
 
 export async function likeAPhoto({ url }: { url: string }) {
   try {
