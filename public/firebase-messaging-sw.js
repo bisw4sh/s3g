@@ -12,7 +12,6 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
@@ -20,16 +19,16 @@ messaging.onBackgroundMessage((payload) => {
 
   const notificationTitle = payload.notification?.title || 'New Message';
   const notificationOptions = {
-    body: payload.notification?.body || 'You have a new message',
-    icon: payload.notification?.icon || '/icon-192x192.png',
-    badge: '/badge-72x72.png',
+    body: payload.notification?.body || 'You have a notification',
+    icon: payload.notification?.icon || '/s3g.png',
+    badge: '/s3g.png',
     tag: 'notification-tag',
     requireInteraction: false,
     actions: [
       {
         action: 'open',
         title: 'Open App',
-        icon: '/icon-192x192.png'
+        icon: '/s3g.png'
       }
     ]
   };
@@ -37,15 +36,17 @@ messaging.onBackgroundMessage((payload) => {
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// Handle notification click
+// handle notification click; like redirect to the /notification on click on that notification
 self.addEventListener('notificationclick', (event) => {
   console.log('Notification click received.');
-
   event.notification.close();
+
+  const url = 'http://localhost:3000/notifications';
 
   if (event.action === 'open' || !event.action) {
     event.waitUntil(
-      clients.openWindow('/')
+      clients.openWindow(url)
     );
   }
 });
+
