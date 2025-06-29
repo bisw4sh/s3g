@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { photosTable, photoLikes } from "@/db/schema";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, desc } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { AuthSession } from "@/lib/auth-types";
 
@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
       .from(photosTable)
       .leftJoin(photoLikes, eq(photoLikes.photoUrl, photosTable.url))
       .groupBy(photosTable.url)
+      .orderBy(desc(photosTable.createdAt))
       .limit(limit)
       .offset(offset);
 
