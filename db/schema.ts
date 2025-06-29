@@ -11,6 +11,7 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   profileUrl: text("profileUrl"),
   coverUrl: text("coverUrl"),
+  notificationToken: text("notificationToken"),
   role: varchar("role", { length: 50 })
     .$type<EUserRole>()
     .default(EUserRole.USER)
