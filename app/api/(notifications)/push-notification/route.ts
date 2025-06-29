@@ -25,10 +25,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await db
+    console.log(`Attempting to update token for user ${session.user.id}`);
+
+    const result = await db
       .update(users)
       .set({ notificationToken })
-      .where(eq(users.id, session.user.id));
+      .where(eq(users.id, session.user.id))
+      .execute();
+
+    console.log(`Update completed, rows affected: ${result.rowCount}`);
+
+    if (result.rowCount === 0) {
+      return NextResponse.json(
+        { success: false, error: "User not found or token not updated" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -42,3 +54,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
