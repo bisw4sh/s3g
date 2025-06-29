@@ -95,8 +95,8 @@ export const notificationTypeEnum = pgEnum("notification_type", [
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
   type: notificationTypeEnum("type").notNull(),
-  title: varchar("title", { length: 49 }).notNull(),
-  description: varchar("description", { length: 500 }).notNull(),
+  title: varchar("title", { length: 500 }).notNull(),
+  description: varchar("description", { length: 1500 }).notNull(),
   readStatus: boolean("readStatus").default(false),
   notificationOf: text("notificationOf").notNull().references(() => users.id, { onDelete: "cascade" }),
 

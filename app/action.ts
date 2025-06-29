@@ -1,6 +1,7 @@
 "use server";
 import { db } from "@/db";
-import { notifications, photoLikes, photosTable } from "@/db/schema";
+import { notifications, photoLikes, photosTable, users } from "@/db/schema";
+import { messaging } from "@/firebase/admin-config";
 import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -24,35 +25,63 @@ export async function likeAPhoto({ url }: { url: string }) {
 
     const isNewLike = likedPhoto.length > 0;
 
-    if (isNewLike) {
-      const photo = await db
-        .select({ ownerId: photosTable.createdBy, title: photosTable.title })
-        .from(photosTable)
-        .where(eq(photosTable.url, url))
+    if (!isNewLike) {
+      return {
+        success: true,
+        message: "Already liked",
+      };
+    }
+
+    const photo = await db
+      .select({ ownerId: photosTable.createdBy, title: photosTable.title })
+      .from(photosTable)
+      .where(eq(photosTable.url, url))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!photo) {
+      return {
+        success: false,
+        error: "Photo not found",
+      };
+    }
+
+    if (photo.ownerId !== session.user.id) {
+      await db.insert(notifications).values({
+        type: "like",
+        title: `${session.user.name} liked your picture ${photo.title}`,
+        description: `User ${session.user.name} liked your image on ${new Date().toLocaleString()}`,
+        notificationOf: photo.ownerId,
+      });
+
+      const owner = await db
+        .select({ notificationToken: users.notificationToken })
+        .from(users)
+        .where(eq(users.id, photo.ownerId))
         .limit(1)
-        .then(rows => rows[0]);
+        .then((rows) => rows[0]);
 
-      if (!photo) {
-        return {
-          success: false,
-          error: "Photo not found",
+      if (owner?.notificationToken) {
+        const message = {
+          token: owner.notificationToken,
+          notification: {
+            title: `${session.user.name} liked your picture ${photo.title}`,
+            body: `Your photo received a like at ${new Date().toLocaleString()}`,
+          }
         };
-      }
 
-      if (photo.ownerId !== session.user.id) {
-        await db.insert(notifications).values({
-          type: "like",
-          title: `${session.user.name} liked your picture ${photo?.title}`,
-          description: `User ${session.user.name} liked your image on ${new Date().toLocaleString()}`,
-          notificationOf: photo.ownerId,
-        });
+        try {
+          await messaging.send(message);
+          console.log("Push notification sent");
+        } catch (pushError) {
+          console.error("Error sending push notification:", pushError);
+        }
       }
-
     }
 
     return {
       success: true,
-      message: isNewLike ? "Image liked" : "Already liked",
+      message: "Image liked",
     };
   } catch (error) {
     console.error("like error:", error);
