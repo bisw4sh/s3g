@@ -13,6 +13,14 @@ import {
 } from "@/components/ui/tooltip"
 import { useRouter } from "next/navigation"
 import { EUserRole } from "@/types/common/roles"
+import { useQuery } from "@tanstack/react-query"
+
+const getNotificationCount = async (): Promise<number> => {
+  const res = await fetch("/api/notification-count")
+  const data = await res.json()
+  console.log(data)
+  return data.count
+}
 
 const Navbar = () => {
   const [zen, setZen] = useState(false)
@@ -20,6 +28,11 @@ const Navbar = () => {
     data,
   } = authClient.useSession()
   const router = useRouter()
+
+  const { data: count, isError, isPending } = useQuery({
+    queryKey: ["notification-count"],
+    queryFn: getNotificationCount
+  })
 
   useEffect(() => {
     const onScroll = () => {
@@ -53,12 +66,22 @@ const Navbar = () => {
             </Button>
 
             <Button className="cursor-pointer" asChild>
-              {data?.user?.id ? <Link href="/notifications"><Bell /></Link> : null}
+              {data?.user?.id ? (
+                <Link href="/notifications">
+                  <div className="relative">
+                    <Bell className="h-6 w-6" />
+                    <span className="absolute -top-4 -right-4 text-xs font-bold text-white bg-red-600 rounded-full h-5 w-5 flex items-center justify-center">
+                      {isError || isPending ? "-" : count}
+                    </span>
+                  </div>
+                </Link>
+              ) : null}
             </Button>
 
             <div onClick={async () => {
               await authClient.signOut()
               router.push("/")
+
             }} className="cursor-pointer">
               <Tooltip>
                 <TooltipTrigger asChild>
