@@ -130,6 +130,10 @@ export default function Me() {
         <Link href="/edit-profile" className="hover:underline font-medium underline-offset-4">
           Edit Profile
         </Link>
+        <Link href="/push-notification" className="hover:underline font-medium underline-offset-4">
+          Push Notification
+        </Link>
+
       </div>
 
       {/* Photo Grid */}
