@@ -1,11 +1,13 @@
 "use client";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@/components/Loader";
 import { LoaderScreen } from "@/components/LoaderScreen";
-import { Notification } from "@/db/schema";
+import { Notification, notifications } from "@/db/schema";
 import { Heart } from "lucide-react";
 import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { markAsRead } from "./action";
 
 const limit = 10;
 
@@ -40,6 +42,7 @@ export default function NotificationPage() {
     },
     initialPageParam: 1,
   });
+  const query = useQueryClient()
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,6 +65,14 @@ export default function NotificationPage() {
 
   const allNotifications = data?.pages.flatMap((page) => page.data) ?? [];
 
+  const handleMarkAsRead = async () => {
+    try {
+      await markAsRead();
+      await query.invalidateQueries({ queryKey: ["notifications"] });
+    } catch (error) {
+      console.error("Failed to mark notifications as read", error);
+    }
+  };
   if (isPending) return <LoaderScreen />;
   if (error)
     return (
@@ -72,15 +83,26 @@ export default function NotificationPage() {
 
   return (
     <main className="w-full min-h-screen px-4 sm:px-8 md:px-16 lg:px-32 py-6 bg-white dark:bg-gray-950">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+      <div className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
         Notifications
-      </h1>
+      </div>
+
+      {allNotifications.some(notification => !notification.readStatus) ? (
+        <Button
+          onClick={handleMarkAsRead}
+          variant="link"
+          className="space-y-2 w-full cursor-pointer"
+        >
+          Mark All Read
+        </Button>
+      ) : null}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {allNotifications.map((notification) => (
           <div
             key={notification.id}
-            className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-sm p-4 flex gap-4 items-start border border-gray-200 dark:border-gray-800"
+            className={`${!notification.readStatus ? "bg-gray-100 dark:bg-gray-800" : "bg-white dark:bg-gray-900"
+              } rounded-2xl shadow-sm p-4 flex gap-4 items-start border border-gray-200 dark:border-gray-800`}
           >
             <div className="text-pink-500 dark:text-pink-400 mt-1">
               {notification.type === "like" && <Heart className="w-5 h-5" />}
@@ -103,7 +125,7 @@ export default function NotificationPage() {
       <div ref={observerRef} className="h-24 flex justify-center items-center">
         {isFetchingNextPage && <Spinner />}
       </div>
-    </main>
+    </main >
   );
 }
 
