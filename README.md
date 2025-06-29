@@ -2,17 +2,20 @@
 
 #### This project is for learning purposes of uploading to the amazon s3 bucket.
 
-[-] Authentication with betterAuth in my neon postgresql db using drizzle.
+1. Authentication with betterAuth in my neon postgresql db using drizzle.
 
-[-] TailwindCSS will be custom color where i will modify using color palette, no dark modes using[tweakcn](https://tweakcn.com/). 
+2. TailwindCSS will be custom color where i will modify using color palette, no dark modes using [tweakcn](https://tweakcn.com/). 
 
-[] framer-motion for animate presence.
+3. framer-motion for animate presence.
 
-[-] authenticated means you're eligible for likes, uploads, deleting own images, admin can do everything of user and can ban, change roles of user, impersonate, delete user, delete other's images, and unauthenticated can only see on what is available(photo and likes).
+4.Roles
+- unauthenticated can only see on what is available(photo and likes).
+- authenticated(user) means you're eligible for likes, uploads, deleting own images.
+- admin can do everything of user and can ban, change roles of user, impersonate, delete user, delete other's images.
 
-[-] infinite query using react-query.
+5. infinite query using react-query.
 
-[-] notification and web push notification.
+6. notification and web push notification.
 
 ```
 Things to configure in AWS S3.
