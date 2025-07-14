@@ -72,7 +72,9 @@ const UploadPage = () => {
 
       const renamedFile = new File([file], renamedFileName, {
         type: file.type,
-      }); const url = await generateUploadUrl(renamedFile.name, renamedFile.type);
+      });
+
+      const url = await generateUploadUrl(renamedFile.name, renamedFile.type);
 
       await fetch(url, {
         method: "PUT",
