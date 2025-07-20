@@ -135,15 +135,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.10)
-      '@types/node':
-        specifier: ^20.19.1
-        version: 20.19.1
-      '@types/nodemailer':
-        specifier: ^6.4.17
-        version: 6.4.17
-      '@types/pg':
-        specifier: ^8.15.4
-        version: 8.15.4
       '@types/react':
         specifier: ^19.1.8
         version: 19.1.8
@@ -2099,9 +2090,6 @@ packages:
 
   '@types/node@22.15.33':
     resolution: {integrity: sha512-wzoocdnnpSxZ+6CjW4ADCK1jVmd1S/J3ArNWfn8FDDQtRm8dkDg7TA+mvek2wNrfCgwuZxqEOiB9B1XCJ6+dbw==}
-
-  '@types/nodemailer@6.4.17':
-    resolution: {integrity: sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww==}
 
   '@types/pg@8.15.4':
     resolution: {integrity: sha512-I6UNVBAoYbvuWkkU3oosC8yxqH21f4/Jc4DK71JLG3dT2mdlGe1z+ep/LQGXaKaOgcvUrsQoPRqfgtMcvZiJhg==}
@@ -6924,7 +6912,7 @@ snapshots:
 
   '@types/better-sqlite3@7.6.13':
     dependencies:
-      '@types/node': 20.19.1
+      '@types/node': 22.15.33
     optional: true
 
   '@types/body-parser@1.19.6':
@@ -6998,10 +6986,6 @@ snapshots:
   '@types/node@22.15.33':
     dependencies:
       undici-types: 6.21.0
-
-  '@types/nodemailer@6.4.17':
-    dependencies:
-      '@types/node': 20.19.1
 
   '@types/pg@8.15.4':
     dependencies:
